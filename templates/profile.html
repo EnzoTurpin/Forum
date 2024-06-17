@@ -42,9 +42,9 @@
       <h2>Posts by {{.ProfileUser.Username}}</h2>
       {{range .Posts}}
       <div class="post">
-        <h3><a href="/post/{{.ID}}">{{.Title}}</a></h3>
+        <h3>{{.Title}}</h3>
         <p>{{.Content}}</p>
-        <p><em>Posted in {{.Category}}</em></p>
+        <p><em>Posted {{.TimeAgo}}</em></p>
       </div>
       {{else}}
       <p>No posts available</p>

@@ -20,8 +20,14 @@
         <input type="email" id="email" name="email" required />
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required />
+        {{if .UsernameError}}
+        <p style="color: red">{{.UsernameError}}</p>
+        {{end}}
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required />
+        {{if .PasswordError}}
+        <p style="color: red">{{.PasswordError}}</p>
+        {{end}}
         <button type="submit">Register</button>
       </form>
     </div>

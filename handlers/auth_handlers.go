@@ -1,13 +1,45 @@
 package handlers
 
 import (
+	"errors"
 	"forum/models"
 	"log"
 	"net/http"
+	"regexp"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
+
+// validatePassword checks the robustness of a password
+func validatePassword(password string) error {
+	var (
+		hasMinLen  = false
+		hasUpper   = false
+		hasLower   = false
+		hasNumber  = false
+		hasSpecial = false
+	)
+	if len(password) >= 8 {
+		hasMinLen = true
+	}
+	for _, char := range password {
+		switch {
+		case regexp.MustCompile(`[A-Z]`).MatchString(string(char)):
+			hasUpper = true
+		case regexp.MustCompile(`[a-z]`).MatchString(string(char)):
+			hasLower = true
+		case regexp.MustCompile(`[0-9]`).MatchString(string(char)):
+			hasNumber = true
+		case regexp.MustCompile(`[!@#\$%\^&\*]`).MatchString(string(char)):
+			hasSpecial = true
+		}
+	}
+	if !hasMinLen || !hasUpper || !hasLower || !hasNumber || !hasSpecial {
+		return errors.New("password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character")
+	}
+	return nil
+}
 
 // Register handles user registration
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +68,31 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		// Validate form values
 		if user.Username == "" || user.Email == "" || user.Password == "" {
 			log.Println("Missing required form values")
-			http.Error(w, "Missing required form values", http.StatusBadRequest)
+			data := map[string]interface{}{
+				"Error": "Missing required form values",
+			}
+			renderTemplate(w, "register", data)
+			return
+		}
+
+		// Check if the username already exists
+		var existingUser models.User
+		if err := db.Where("username = ?", user.Username).First(&existingUser).Error; err == nil {
+			log.Println("Username already in use")
+			data := map[string]interface{}{
+				"UsernameError": "Username already in use",
+			}
+			renderTemplate(w, "register", data)
+			return
+		}
+
+		// Validate password robustness
+		if err := validatePassword(user.Password); err != nil {
+			log.Printf("Password validation failed: %v", err)
+			data := map[string]interface{}{
+				"PasswordError": err.Error(),
+			}
+			renderTemplate(w, "register", data)
 			return
 		}
 
@@ -59,7 +115,10 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 		if result != nil {
 			log.Printf("Unable to register user: %v", result)
-			http.Error(w, "Unable to register user", http.StatusInternalServerError)
+			data := map[string]interface{}{
+				"Error": "Unable to register user",
+			}
+			renderTemplate(w, "register", data)
 			return
 		}
 

@@ -3,13 +3,11 @@ package handlers
 import (
 	"fmt"
 	"forum/models"
-	"io"
 	"log"
 	"net/http"
-	"os"
-	"strings"
 
 	"github.com/gorilla/mux"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func ViewProfile(w http.ResponseWriter, r *http.Request) {
@@ -24,6 +22,12 @@ func ViewProfile(w http.ResponseWriter, r *http.Request) {
 	}
 	var posts []models.Post
 	db.Where("user_id = ?", user.ID).Find(&posts)
+
+	// Format the time ago for each post
+	for i := range posts {
+		posts[i].TimeAgo = formatTimeAgo(posts[i].CreatedAt)
+	}
+
 	var followers []models.Follower
 	var following []models.Follower
 	db.Preload("Follower").Where("follows_id = ?", user.ID).Find(&followers)
@@ -161,66 +165,60 @@ func EditProfile(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == http.MethodPost {
 		log.Println("Handling POST request for profile edit")
-		for name, values := range r.Header {
-			for _, value := range values {
-				log.Printf("%s: %s", name, value)
-			}
-		}
 		r.Body = http.MaxBytesReader(w, r.Body, 1048576)
-		body, err := io.ReadAll(r.Body)
-		if err != nil {
-			log.Printf("Error reading body: %v", err)
-			http.Error(w, "Error reading body", http.StatusInternalServerError)
-			return
-		}
-		log.Printf("Raw body: %s", body)
-		r.Body = io.NopCloser(strings.NewReader(string(body)))
 		r.ParseMultipartForm(32 << 20)
-		log.Println("Request form values after parsing:")
-		log.Printf("Form values: %v", r.Form)
+
 		newUsername := r.FormValue("username")
 		newEmail := r.FormValue("email")
 		password := r.FormValue("password")
 		log.Printf("Parsed form values - Username: %s, Email: %s, Password: %s", newUsername, newEmail, password)
+
+		// Check if the new username already exists
 		var existingUser models.User
+		if err := db.Where("username = ? AND id != ?", newUsername, user.ID).First(&existingUser).Error; err == nil {
+			log.Println("Username already in use")
+			data := map[string]interface{}{
+				"User":          user,
+				"UsernameError": "Username already in use",
+			}
+			renderTemplate(w, "edit_profile", data)
+			return
+		}
+
+		// Validate new email if changed
 		if err := db.Where("email = ? AND id != ?", newEmail, user.ID).First(&existingUser).Error; err == nil {
 			log.Println("Email already in use by another user")
-			http.Error(w, "Email already in use", http.StatusBadRequest)
+			data := map[string]interface{}{
+				"User":       user,
+				"EmailError": "Email already in use",
+			}
+			renderTemplate(w, "edit_profile", data)
 			return
 		}
+
 		user.Username = newUsername
 		user.Email = newEmail
+
+		// Validate and hash new password if provided
 		if password != "" {
-			user.Password = password
-		}
-		log.Println("Checking for profile picture upload")
-		file, header, err := r.FormFile("profile_picture")
-		if err != nil && err != http.ErrMissingFile {
-			log.Printf("Error uploading file: %v", err)
-			http.Error(w, "Error uploading file: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
-		if err == nil {
-			defer file.Close()
-			log.Printf("Uploaded file: %s", header.Filename)
-			fileExtension := strings.ToLower(header.Filename[strings.LastIndex(header.Filename, "."):])
-			filePath := fmt.Sprintf("static/uploads/%d%s", user.ID, fileExtension)
-			f, err := os.Create(filePath)
-			if err != nil {
-				log.Printf("Error creating file: %v", err)
-				http.Error(w, "Error creating file: "+err.Error(), http.StatusInternalServerError)
+			if err := validatePassword(password); err != nil {
+				log.Printf("Password validation failed: %v", err)
+				data := map[string]interface{}{
+					"User":          user,
+					"PasswordError": err.Error(),
+				}
+				renderTemplate(w, "edit_profile", data)
 				return
 			}
-			defer f.Close()
-			_, err = io.Copy(f, file)
+			hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 			if err != nil {
-				log.Printf("Error saving file: %v", err)
-				http.Error(w, "Error saving file: "+err.Error(), http.StatusInternalServerError)
+				log.Printf("Error hashing password: %v", err)
+				http.Error(w, "Error hashing password", http.StatusInternalServerError)
 				return
 			}
-			user.ProfilePicture = filePath
-			log.Printf("Profile picture saved to: %s", filePath)
+			user.Password = string(hashedPassword)
 		}
+
 		if err := db.Save(&user).Error; err != nil {
 			log.Printf("Unable to update profile: %v", err)
 			http.Error(w, "Unable to update profile: "+err.Error(), http.StatusInternalServerError)
@@ -232,7 +230,7 @@ func EditProfile(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, fmt.Sprintf("/profile/%s", user.Username), http.StatusSeeOther)
 		return
 	}
-	log.Println("Handling GET request for profile edit")
+	log.Println("Rendering edit profile template")
 	data := map[string]interface{}{
 		"User": user,
 	}
@@ -305,4 +303,62 @@ func ViewFollowing(w http.ResponseWriter, r *http.Request) {
 		data["CurrentUserID"] = uint(0)
 	}
 	renderTemplate(w, "following", data)
+}
+
+func DeleteProfile(w http.ResponseWriter, r *http.Request) {
+	log.Println("Starting DeleteProfile handler")
+	session, err := store.Get(r, "session")
+	if err != nil {
+		log.Printf("Unable to get session: %v", err)
+		http.Error(w, "Unable to get session: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	currentUserID, ok := session.Values["userID"]
+	if !ok {
+		log.Println("User not logged in, redirecting to login page")
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	vars := mux.Vars(r)
+	username := vars["username"]
+	var user models.User
+	if err := db.Where("username = ?", username).First(&user).Error; err != nil {
+		log.Printf("User not found: %v", err)
+		http.NotFound(w, r)
+		return
+	}
+	if user.ID != currentUserID.(uint) {
+		log.Println("User does not have permission to delete this profile")
+		http.Error(w, "You do not have permission to delete this profile", http.StatusForbidden)
+		return
+	}
+	if r.Method == http.MethodPost {
+		log.Println("Handling POST request for profile deletion")
+
+		// Delete user's posts
+		if err := db.Where("user_id = ?", user.ID).Delete(&models.Post{}).Error; err != nil {
+			log.Printf("Error deleting user's posts: %v", err)
+			http.Error(w, "Error deleting user's posts", http.StatusInternalServerError)
+			return
+		}
+
+		// Delete the user
+		if err := db.Delete(&user).Error; err != nil {
+			log.Printf("Error deleting user: %v", err)
+			http.Error(w, "Error deleting user", http.StatusInternalServerError)
+			return
+		}
+
+		// Clear the session
+		delete(session.Values, "user")
+		delete(session.Values, "userID")
+		if err := session.Save(r, w); err != nil {
+			log.Printf("Error saving session: %v", err)
+			http.Error(w, "Error saving session", http.StatusInternalServerError)
+			return
+		}
+
+		log.Println("User profile and posts deleted successfully")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
 }

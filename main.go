@@ -93,6 +93,7 @@ func main() {
 	r.HandleFunc("/profile/{username}/edit", handlers.EditProfile).Methods("GET", "POST")
 	r.HandleFunc("/profile/{username}/followers", handlers.ViewFollowers).Methods("GET")
 	r.HandleFunc("/profile/{username}/following", handlers.ViewFollowing).Methods("GET")
+	r.HandleFunc("/profile/{username}/delete", handlers.DeleteProfile).Methods("POST")
 	r.HandleFunc("/categories", handlers.Categories).Methods("GET")
 
 	// Servir les fichiers statiques (HTML, CSS, JS)
