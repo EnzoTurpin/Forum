@@ -10,61 +10,33 @@ body {
   padding: 0;
 }
 
-header {
-  background-color: #2d2d2d; /* Couleur de fond sombre pour le header */
-  color: #f05454; /* Couleur d'accent subtile */
-  padding: 1rem;
+.header {
+  background-color: #4a4a4a;
+  color: #f44336;
+  padding: 20px;
   text-align: center;
-  border-bottom: 2px solid #f05454; /* Bordure d'accent */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre subtile */
-}
-
-header h1 {
-  margin: 0;
-  transition: color 0.3s;
-}
-
-header h1:hover {
-  color: #d64545; /* Changement de couleur subtile au survol */
+  font-size: 2em;
+  border-bottom: 4px solid #2d2d2d;
 }
 
 nav {
-  background-color: #2d2d2d; /* Couleur de fond sombre pour la navigation */
-  color: #e6e6e6;
   display: flex;
   justify-content: center;
-  padding: 0.5rem;
-  border-bottom: 2px solid #f05454; /* Bordure d'accent */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre subtile */
+  background-color: #4a4a4a;
+  padding: 10px;
+  border-bottom: 2px solid #2d2d2d;
 }
 
-nav a {
-  color: #e6e6e6;
-  margin: 0 1rem;
+.welcome-message {
+  color: white;
+  margin-right: 10px;
+}
+
+.nav-link {
+  color: white;
+  padding: 14px 20px;
   text-decoration: none;
-  position: relative;
-  transition: color 0.3s;
-}
-
-nav a:hover {
-  color: #f05454; /* Couleur d'accent lors du survol */
-}
-
-nav a::before {
-  content: "";
-  position: absolute;
-  width: 0%;
-  height: 2px;
-  bottom: -2px;
-  left: 0;
-  background-color: #f05454;
-  visibility: hidden;
-  transition: all 0.3s ease-in-out;
-}
-
-nav a:hover::before {
-  visibility: visible;
-  width: 100%;
+  font-weight: bold;
 }
 
 .container {
@@ -74,6 +46,15 @@ nav a:hover::before {
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Ombre plus marquée */
+}
+
+.posts-title {
+  background-color: #4a4a4a;
+  color: #f44336;
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px 8px 0 0;
+  margin: -20px -20px 20px -20px;
 }
 
 h2 {
@@ -115,6 +96,16 @@ h2 {
   height: auto; /* Assurez-vous que l'image conserve son ratio hauteur/largeur */
 }
 
+.username {
+  margin-left: 10px;
+}
+
+.username-link {
+  color: #4a4a4a;
+  text-decoration: none;
+  font-weight: bold;
+}
+
 .post-content {
   margin: 1rem 0;
 }
@@ -129,16 +120,28 @@ h2 {
   align-items: center;
 }
 
+.like-button,
+.reply-button {
+  background-color: #4a4a4a;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.like-button {
+  background-color: #f44336;
+}
+
 footer {
+  background-color: #4a4a4a;
+  color: white;
   text-align: center;
-  padding: 1rem;
-  background-color: #2d2d2d; /* Couleur de fond sombre pour le footer */
-  color: #f05454; /* Couleur d'accent */
-  border-top: 2px solid #f05454; /* Bordure d'accent */
-  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1); /* Ombre subtile */
-  position: sticky;
-  bottom: 0;
-  width: 100%;
+  padding: 20px 0;
+  margin-top: 20px;
+  border-top: 4px solid #2d2d2d;
 }
 
 button {
@@ -198,7 +201,7 @@ form button {
 
 .post-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .post-user {
@@ -214,6 +217,7 @@ form button {
 .profile-picture {
   max-width: 100px; /* Largeur maximale optionnelle */
   height: auto; /* Garde le ratio hauteur/largeur */
+  border-radius: 50%;
 }
 
 .posted-by {

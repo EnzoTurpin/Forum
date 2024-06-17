@@ -4,29 +4,35 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Index</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+    />
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
-    <header>
+    <header class="header">
       <h1>Welcome to the Forum</h1>
     </header>
-    <nav>
+    <nav class="nav">
       {{if .User}}
-      <span>Bienvenue, <a href="/profile/{{.User}}">{{.User}}</a>!</span>
-      <a href="/logout">Logout</a>
-      <a href="/create-post">Create Post</a>
+      <span class="welcome-message">Bienvenue, {{.User}}!</span>
+      <a href="/logout" class="nav-link">Logout</a>
+      <a href="/create-post" class="nav-link">Create Post</a>
       {{else}}
-      <a href="/login">Login</a>
-      <a href="/register">Register</a>
+      <a href="/login" class="nav-link">Login</a>
+      <a href="/register" class="nav-link">Register</a>
       {{end}}
     </nav>
     <div class="container">
-      <h2>Posts</h2>
+      <h2 class="posts-title">Posts</h2>
       {{range .Posts}}
       <div class="post">
         <div class="post-header">
-          <h3><a href="/post/{{.ID}}">{{.Title}}</a></h3>
-          <div class="post-user">
+          <h3><a href="/post/{{.ID}}" class="post-link">{{.Title}}</a></h3>
+        </div>
+        <div class="post-user">
+          <div class="profile-picture">
             {{if .User.ProfilePicture}}
             <img
               src="/{{.User.ProfilePicture}}"
@@ -40,21 +46,28 @@
               class="profile-picture"
             />
             {{end}}
-            <p>
-              <em
-                >Posted by
-                <a href="/profile/{{.User.Username}}">{{.User.Username}}</a></em
-              >
-            </p>
+          </div>
+          <div class="username">
+            <a href="/profile/{{.User.Username}}" class="username-link"
+              >{{.User.Username}}</a
+            >
           </div>
         </div>
-        <p>{{.Content}}</p>
+        <div class="post-content">
+          <p>{{.Content}}</p>
+        </div>
+        <div class="post-footer">
+          <div>
+            <button class="like-button">❤️</button>
+            <button class="reply-button">Réponse</button>
+          </div>
+        </div>
       </div>
       {{else}}
       <p>No posts available</p>
       {{end}}
     </div>
-    <footer>
+    <footer class="footer">
       <p>&copy; 2024 Forum</p>
     </footer>
   </body>

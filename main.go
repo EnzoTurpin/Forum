@@ -4,26 +4,61 @@ import (
 	"fmt"
 	"forum/handlers"
 	"forum/models"
+	"log"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var store = sessions.NewCookieStore([]byte("secret-key"))
 
 func main() {
-	// Initialisation de la base de données
-	db, err := gorm.Open(sqlite.Open("forum.db"), &gorm.Config{})
+	// Custom logger with minimal output
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags),
+		logger.Config{
+			SlowThreshold: time.Second,
+			LogLevel:      logger.Silent, // Set log level to Silent
+			Colorful:      false,
+		},
+	)
+
+	// Open the database with custom parameters
+	db, err := gorm.Open(sqlite.Open("file:bdd/forum.db?cache=shared&_timeout=5000"), &gorm.Config{
+		Logger:      newLogger,
+		PrepareStmt: true, // Use prepared statements
+	})
+
 	if err != nil {
 		fmt.Println("Échec de la connexion à la base de données :", err)
 		return
 	}
 
+	// Set the connection pool parameters
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(100)
+	sqlDB.SetConnMaxLifetime(time.Hour)
+
+	// Explicitly set the journal mode to DELETE
+	if _, err := sqlDB.Exec("PRAGMA journal_mode = DELETE;"); err != nil {
+		fmt.Println("Échec de la configuration du mode journal DELETE :", err)
+		return
+	}
+
 	// Migrer les modèles
-	db.AutoMigrate(&models.User{}, &models.Post{}, &models.Comment{}, &models.Like{}, &models.Follower{})
+	if err := db.AutoMigrate(&models.User{}, &models.Post{}, &models.Comment{}, &models.Like{}, &models.Follower{}); err != nil {
+		log.Fatalf("Échec de la migration des modèles : %v", err)
+	}
 	handlers.SetDB(db)
 	handlers.SetStore(store)
 
