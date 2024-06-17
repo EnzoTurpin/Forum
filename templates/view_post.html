@@ -30,6 +30,21 @@
           ></em
         >
       </p>
+      <div class="profile-picture">
+        {{if .Post.User.ProfilePicture}}
+        <img
+          src="/{{.Post.User.ProfilePicture}}"
+          alt="Profile Picture"
+          class="profile-picture"
+        />
+        {{else}}
+        <img
+          src="/static/img/default-picture.png"
+          alt="Default Profile Picture"
+          class="profile-picture"
+        />
+        {{end}}
+      </div>
       <p>Likes: {{.Post.Likes}}</p>
       {{if .User}}
       <form action="/post/{{.Post.ID}}/like" method="post">
@@ -47,6 +62,21 @@
             <a href="/profile/{{.User.Username}}">{{.User.Username}}</a></em
           >
         </p>
+        <div class="profile-picture">
+          {{if .User.ProfilePicture}}
+          <img
+            src="/{{.User.ProfilePicture}}"
+            alt="Profile Picture"
+            class="profile-picture"
+          />
+          {{else}}
+          <img
+            src="/static/img/default-picture.png"
+            alt="Default Profile Picture"
+            class="profile-picture"
+          />
+          {{end}}
+        </div>
         <p>Likes: {{.Likes}}</p>
         {{if $.User}}
         <form action="/post/{{$.Post.ID}}/comment/{{.ID}}/like" method="post">

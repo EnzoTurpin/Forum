@@ -56,11 +56,20 @@ func main() {
 	}
 
 	// Migrer les modèles
-	if err := db.AutoMigrate(&models.User{}, &models.Post{}, &models.Comment{}, &models.Like{}, &models.Follower{}); err != nil {
+	if err := db.AutoMigrate(&models.User{}, &models.Post{}, &models.Comment{}, &models.Like{}, &models.Follower{}, &models.Category{}); err != nil {
 		log.Fatalf("Échec de la migration des modèles : %v", err)
 	}
 	handlers.SetDB(db)
 	handlers.SetStore(store)
+
+	// Ajouter des catégories par défaut si elles n'existent pas déjà
+	categories := []string{"Action", "Aventure", "RPG", "FPS", "TPS", "Stratégie", "Simulation", "Sport", "Course", "Puzzle", "Combat", "Plateforme", "Horreur", "MMO", "VR", "Jeux de rythme", "Party Games", "Rogue-like", "Metroidvania", "Sandbox", "Visual Novel", "Jeux de cartes", "Jeux de société", "Jeux de gestion", "Survival"}
+	for _, name := range categories {
+		var category models.Category
+		if err := db.Where("name = ?", name).First(&category).Error; err != nil {
+			db.Create(&models.Category{Name: name})
+		}
+	}
 
 	// Initialiser le routeur
 	r := mux.NewRouter()
@@ -82,6 +91,7 @@ func main() {
 	r.HandleFunc("/profile/{username}/edit", handlers.EditProfile).Methods("GET", "POST")
 	r.HandleFunc("/profile/{username}/followers", handlers.ViewFollowers).Methods("GET")
 	r.HandleFunc("/profile/{username}/following", handlers.ViewFollowing).Methods("GET")
+	r.HandleFunc("/categories", handlers.Categories).Methods("GET")
 
 	// Servir les fichiers statiques (HTML, CSS, JS)
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))

@@ -21,11 +21,17 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		log.Println("Handling POST request for creating a post")
 		r.ParseForm()
+		categoryID, err := strconv.ParseUint(r.FormValue("category"), 10, 32)
+		if err != nil {
+			log.Printf("Invalid category ID: %v", err)
+			http.Error(w, "Invalid category ID", http.StatusBadRequest)
+			return
+		}
 		post := models.Post{
-			Title:    r.FormValue("title"),
-			Content:  r.FormValue("content"),
-			Category: r.FormValue("category"),
-			UserID:   userID.(uint),
+			Title:      r.FormValue("title"),
+			Content:    r.FormValue("content"),
+			CategoryID: uint(categoryID),
+			UserID:     userID.(uint),
 		}
 		result := db.Create(&post)
 		if result.Error != nil {
@@ -37,7 +43,15 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		log.Println("Rendering create post template")
-		renderTemplate(w, "create_post", nil)
+		var categories []models.Category
+		if err := db.Find(&categories).Error; err != nil {
+			log.Printf("Unable to fetch categories: %v", err)
+			http.Error(w, "Unable to fetch categories", http.StatusInternalServerError)
+			return
+		}
+		renderTemplate(w, "create_post", map[string]interface{}{
+			"Categories": categories,
+		})
 	}
 }
 

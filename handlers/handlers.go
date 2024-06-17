@@ -47,8 +47,18 @@ func PageIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var posts []models.Post
-	db.Preload("User").Preload("Comments.User").Find(&posts)
+	categories := r.URL.Query()["categories"]
+	if len(categories) > 0 {
+		db.Preload("User").Preload("Comments.User").Where("category_id IN (?)", categories).Find(&posts)
+	} else {
+		db.Preload("User").Preload("Comments.User").Find(&posts)
+	}
 	data["Posts"] = posts
+
+	var categoriesList []models.Category
+	if err := db.Find(&categoriesList).Error; err == nil {
+		data["Categories"] = categoriesList
+	}
 
 	renderTemplate(w, "index", data)
 }

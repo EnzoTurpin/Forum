@@ -1,11 +1,7 @@
 body {
-  font-family: "Roboto Mono", monospace; /* Police moderne et stylée */
-  background: linear-gradient(
-    135deg,
-    #1a1a1d,
-    #2d2d2d
-  ); /* Gradient de fond subtil */
-  color: #e6e6e6; /* Couleur du texte claire */
+  font-family: "Roboto Mono", monospace;
+  background: linear-gradient(135deg, #1a1a1d, #2d2d2d);
+  color: #e6e6e6;
   margin: 0;
   padding: 0;
 }
@@ -17,6 +13,11 @@ body {
   text-align: center;
   font-size: 2em;
   border-bottom: 4px solid #2d2d2d;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
 nav {
@@ -42,10 +43,10 @@ nav {
 .container {
   max-width: 800px;
   margin: 2rem auto;
-  background-color: #2d2d2d; /* Couleur de fond sombre pour le container */
+  background-color: #2d2d2d;
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Ombre plus marquée */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 .posts-title {
@@ -58,13 +59,13 @@ nav {
 }
 
 h2 {
-  border-bottom: 2px solid #f05454; /* Couleur de bordure d'accent */
+  border-bottom: 2px solid #f05454;
   padding-bottom: 0.5rem;
   margin-bottom: 1rem;
 }
 
 .post {
-  border-bottom: 1px solid #3d3d3d; /* Couleur de bordure sombre */
+  border-bottom: 1px solid #3d3d3d;
   padding: 1rem 0;
 }
 
@@ -81,7 +82,7 @@ h2 {
 }
 
 .post-header h3 a:hover {
-  color: #f05454; /* Couleur d'accent lors du survol */
+  color: #f05454;
 }
 
 .post-user {
@@ -90,10 +91,10 @@ h2 {
 }
 
 .profile-picture {
-  float: left; /* Pour aligner l'image à gauche */
-  margin-right: 10px; /* Pour ajouter un espacement à droite de l'image */
-  max-width: 100px; /* Facultatif : limitez la largeur maximale de l'image */
-  height: auto; /* Assurez-vous que l'image conserve son ratio hauteur/largeur */
+  float: left;
+  margin-right: 10px;
+  max-width: 100px;
+  height: auto;
 }
 
 .username {
@@ -145,7 +146,7 @@ footer {
 }
 
 button {
-  background-color: #f05454; /* Couleur d'accent pour les boutons */
+  background-color: #f05454;
   border: none;
   color: white;
   padding: 0.5rem 1rem;
@@ -160,7 +161,7 @@ button {
 }
 
 button:hover {
-  background-color: #d64545; /* Couleur légèrement différente au survol */
+  background-color: #d64545;
 }
 
 form {
@@ -180,10 +181,10 @@ form textarea {
   width: 100%;
   padding: 0.5rem;
   margin-bottom: 1rem;
-  border: 1px solid #3d3d3d; /* Bordure sombre */
+  border: 1px solid #3d3d3d;
   border-radius: 4px;
-  background-color: #2d2d2d; /* Fond sombre pour les champs de formulaire */
-  color: #e6e6e6; /* Texte clair */
+  background-color: #2d2d2d;
+  color: #e6e6e6;
   transition: border-color 0.3s;
 }
 
@@ -192,7 +193,7 @@ form input[type="email"]:focus,
 form input[type="password"]:focus,
 form input[type="file"]:focus,
 form textarea:focus {
-  border-color: #f05454; /* Bordure d'accent lors du focus */
+  border-color: #f05454;
 }
 
 form button {
@@ -210,19 +211,19 @@ form button {
 }
 
 .profile-picture-container {
-  float: left; /* Alignement de l'image à gauche */
-  margin-right: 10px; /* Espacement à droite de l'image */
+  float: left;
+  margin-right: 10px;
 }
 
 .profile-picture {
-  max-width: 100px; /* Largeur maximale optionnelle */
-  height: auto; /* Garde le ratio hauteur/largeur */
+  max-width: 100px;
+  height: auto;
   border-radius: 50%;
 }
 
 .posted-by {
-  overflow: hidden; /* Permet de forcer l'élément à contenir ses flotteurs enfants */
-  margin-left: 120px; /* Marge à gauche pour dégager l'image */
+  overflow: hidden;
+  margin-left: 120px;
 }
 
 /* Style pour le bouton de modification */
@@ -232,7 +233,7 @@ form button {
   margin: 0.5rem 0;
   font-size: 16px;
   color: white;
-  background-color: #f05454; /* Couleur d'accent pour les boutons */
+  background-color: #f05454;
   text-align: center;
   border-radius: 4px;
   text-decoration: none;

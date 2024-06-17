@@ -4,10 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Index</title>
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-    />
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
@@ -26,6 +22,18 @@
     </nav>
     <div class="container">
       <h2 class="posts-title">Posts</h2>
+      <form method="get" action="/">
+        <label for="categories">Select Categories:</label>
+        <div id="categories">
+          {{range .Categories}}
+          <label>
+            <input type="checkbox" name="categories" value="{{.ID}}" />
+            {{.Name}} </label
+          ><br />
+          {{end}}
+        </div>
+        <button type="submit">Filter</button>
+      </form>
       {{range .Posts}}
       <div class="post">
         <div class="post-header">
@@ -41,7 +49,7 @@
             />
             {{else}}
             <img
-              src="/static/default-profile.png"
+              src="/static/img/default-picture.png"
               alt="Default Profile Picture"
               class="profile-picture"
             />
