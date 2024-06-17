@@ -5,6 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Index</title>
     <link rel="stylesheet" href="/static/style.css" />
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".like-button").forEach(function (button) {
+          button.addEventListener("click", function (event) {
+            event.preventDefault();
+            var postId = this.dataset.postId;
+            fetch(`/post/${postId}/like`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            })
+              .then((response) => {
+                if (response.ok) {
+                  response.json().then((data) => {
+                    document.querySelector(
+                      `#like-count-${postId}`
+                    ).textContent = data.likes;
+                  });
+                }
+              })
+              .catch((error) => console.error("Error:", error));
+          });
+        });
+
+        document.querySelectorAll(".reply-button").forEach(function (button) {
+          button.addEventListener("click", function (event) {
+            event.preventDefault();
+            var postId = this.dataset.postId;
+            var replyForm = document.getElementById("reply-form-" + postId);
+            replyForm.style.display =
+              replyForm.style.display === "block" ? "none" : "block";
+          });
+        });
+      });
+    </script>
   </head>
   <body>
     <header class="header">
@@ -55,21 +91,53 @@
             />
             {{end}}
           </div>
-          <div class="username">
-            <a href="/profile/{{.User.Username}}" class="username-link"
-              >{{.User.Username}}</a
-            >
+          <div class="post-meta">
+            <div class="username">
+              <a href="/profile/{{.User.Username}}" class="username-link"
+                >{{.User.Username}}</a
+              >
+            </div>
+            <div class="time-ago">Posté {{.TimeAgo}}</div>
           </div>
         </div>
         <div class="post-content">
           <p>{{.Content}}</p>
+          <p>Likes: <span id="like-count-{{.ID}}">{{.Likes}}</span></p>
         </div>
         <div class="post-footer">
           <div>
-            <button class="like-button">❤️</button>
-            <button class="reply-button">Réponse</button>
+            <button class="like-button" data-post-id="{{.ID}}">❤️</button>
+            <button class="reply-button" data-post-id="{{.ID}}">
+              Répondre
+            </button>
           </div>
         </div>
+        <div class="comments-section">
+          <h4>Commentaires</h4>
+          {{range $index, $comment := .Comments}} {{if lt $index 2}}
+          <div class="comment">
+            <p>{{.Content}}</p>
+            <p>
+              <em
+                >Commented by
+                <a href="/profile/{{.User.Username}}">{{.User.Username}}</a></em
+              >
+            </p>
+          </div>
+          {{end}} {{end}} {{if gt (len .Comments) 2}}
+          <a href="/post/{{.ID}}" class="view-comments-link"
+            >Voir tous les commentaires</a
+          >
+          {{end}}
+        </div>
+        {{if .User}}
+        <div id="reply-form-{{.ID}}" class="reply-form" style="display: none">
+          <form action="/post/{{.ID}}/comment" method="post">
+            <textarea name="content" required></textarea>
+            <button type="submit">Submit Comment</button>
+          </form>
+        </div>
+        {{end}}
       </div>
       {{else}}
       <p>No posts available</p>

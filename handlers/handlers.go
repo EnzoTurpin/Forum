@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"forum/models"
 	"html/template"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/sessions"
 	"gorm.io/gorm"
@@ -34,6 +36,23 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 	t.Execute(w, data)
 }
 
+// formatTimeAgo formats the duration since the post was created
+func formatTimeAgo(t time.Time) string {
+	d := time.Since(t)
+	switch {
+	case d.Seconds() < 60:
+		return fmt.Sprintf("il y a %.f secondes", d.Seconds())
+	case d.Minutes() < 60:
+		return fmt.Sprintf("il y a %.f minutes", d.Minutes())
+	case d.Hours() < 24:
+		return fmt.Sprintf("il y a %.f heures", d.Hours())
+	case d.Hours() < 48:
+		return "il y a 1 jour"
+	default:
+		return fmt.Sprintf("il y a %.f jours", d.Hours()/24)
+	}
+}
+
 // PageIndex handles the rendering of the index page
 func PageIndex(w http.ResponseWriter, r *http.Request) {
 	log.Println("Rendering index page")
@@ -52,6 +71,10 @@ func PageIndex(w http.ResponseWriter, r *http.Request) {
 		db.Preload("User").Preload("Comments.User").Where("category_id IN (?)", categories).Find(&posts)
 	} else {
 		db.Preload("User").Preload("Comments.User").Find(&posts)
+	}
+
+	for i := range posts {
+		posts[i].TimeAgo = formatTimeAgo(posts[i].CreatedAt)
 	}
 	data["Posts"] = posts
 

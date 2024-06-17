@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"forum/models"
 	"log"
 	"net/http"
@@ -41,7 +42,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		log.Println("Comment created successfully")
-		http.Redirect(w, r, "/post/"+postIDStr, http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
 
@@ -83,6 +84,54 @@ func LikeComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println("Comment like updated successfully")
-	postID := vars["postID"]
-	http.Redirect(w, r, "/post/"+postID, http.StatusSeeOther)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]int{"likes": comment.Likes})
+}
+
+func ViewAllComments(w http.ResponseWriter, r *http.Request) {
+	log.Println("Starting ViewAllComments handler")
+	vars := mux.Vars(r)
+	postID, err := strconv.Atoi(vars["postID"])
+	if err != nil {
+		log.Printf("Invalid post ID: %v", err)
+		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		return
+	}
+	var post models.Post
+	if err := db.Preload("User").Preload("Comments.User").First(&post, postID).Error; err != nil {
+		log.Printf("Post not found: %v", err)
+		http.Error(w, "Post not found", http.StatusNotFound)
+		return
+	}
+	data := map[string]interface{}{
+		"Post": post,
+	}
+	renderTemplate(w, "view_all_comments", data)
+}
+
+func ViewPostWithComments(w http.ResponseWriter, r *http.Request) {
+	log.Println("Starting ViewPostWithComments handler")
+	vars := mux.Vars(r)
+	postID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		log.Printf("Invalid post ID: %v", err)
+		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		return
+	}
+	var post models.Post
+	if err := db.Preload("User").Preload("Comments.User").First(&post, postID).Error; err != nil {
+		log.Printf("Post not found: %v", err)
+		http.Error(w, "Post not found", http.StatusNotFound)
+		return
+	}
+	session, _ := store.Get(r, "session")
+	user, ok := session.Values["user"]
+	data := map[string]interface{}{
+		"Post": post,
+		"User": user,
+	}
+	if !ok {
+		data["User"] = ""
+	}
+	renderTemplate(w, "view_post", data)
 }

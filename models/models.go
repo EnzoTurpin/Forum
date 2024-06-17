@@ -13,6 +13,7 @@ type Post struct {
 	Category   Category
 	Likes      int
 	Dislikes   int
+	TimeAgo    string `gorm:"-"`
 }
 
 type Comment struct {

@@ -83,6 +83,8 @@ func main() {
 	r.HandleFunc("/post/{id}", handlers.ViewPost).Methods("GET")
 	r.HandleFunc("/post/{id}/comment", handlers.CreateComment).Methods("POST")
 	r.HandleFunc("/post/{id}/like", handlers.LikePost).Methods("POST")
+	r.HandleFunc("/post/{id}", handlers.ViewPostWithComments).Methods("GET")
+	r.HandleFunc("/post/{postID}/comments", handlers.ViewAllComments).Methods("GET")
 	r.HandleFunc("/post/{postID}/comment/{id}/like", handlers.LikeComment).Methods("POST")
 	r.HandleFunc("/category/{category}", handlers.PostsByCategory).Methods("GET")
 	r.HandleFunc("/profile/{username}", handlers.ViewProfile).Methods("GET")
