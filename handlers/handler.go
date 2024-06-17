@@ -38,7 +38,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 }
 
 func PageIndex(w http.ResponseWriter, r *http.Request) {
-	log.Println("Rendering index page")
+	log.Println("Rendu de la page d'accueil")
 	session, _ := store.Get(r, "session")
 	user, ok := session.Values["user"]
 	data := map[string]interface{}{
@@ -49,11 +49,57 @@ func PageIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var posts []models.Post
-	db.Preload("User").Preload("Comments.User").Find(&posts)
+
+	// Vérifier si un filtre de catégorie est appliqué
+	category := r.FormValue("category")
+	if category != "" {
+		if err := db.Preload("User").Preload("Comments.User").Where("category = ?", category).Find(&posts).Error; err != nil {
+			log.Printf("Erreur lors de la récupération des publications par catégorie : %v", err)
+			http.Error(w, "Erreur lors de la récupération des publications par catégorie", http.StatusInternalServerError)
+			return
+		}
+		data["Category"] = category
+	} else {
+		if err := db.Preload("User").Preload("Comments.User").Find(&posts).Error; err != nil {
+			log.Printf("Erreur lors de la récupération de toutes les publications : %v", err)
+			http.Error(w, "Erreur lors de la récupération de toutes les publications", http.StatusInternalServerError)
+			return
+		}
+	}
+
 	data["Posts"] = posts
 
 	renderTemplate(w, "index", data)
 }
+
+func PostsByCategory(w http.ResponseWriter, r *http.Request) {
+	log.Println("Starting PostsByCategory handler")
+
+	vars := mux.Vars(r)
+	category := vars["category"]
+
+	var posts []models.Post
+	if err := db.Preload("User").Preload("Comments.User").Where("category = ?", category).Find(&posts).Error; err != nil {
+		log.Printf("Category not found: %v", err)
+		http.Error(w, "Category not found", http.StatusNotFound)
+		return
+	}
+
+	session, _ := store.Get(r, "session")
+	user, ok := session.Values["user"]
+	data := map[string]interface{}{
+		"Posts":    posts,
+		"User":     user,
+		"Category": category,
+	}
+	if !ok {
+		data["User"] = ""
+	}
+
+	renderTemplate(w, "category_posts", data)
+}
+
+
 
 func Register(w http.ResponseWriter, r *http.Request) {
 	log.Println("Starting Register handler")
@@ -312,32 +358,7 @@ func LikeComment(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/post/"+postID, http.StatusSeeOther)
 }
 
-func PostsByCategory(w http.ResponseWriter, r *http.Request) {
-	log.Println("Starting PostsByCategory handler")
 
-	vars := mux.Vars(r)
-	category := vars["category"]
-
-	var posts []models.Post
-	if err := db.Preload("User").Preload("Comments.User").Where("category = ?", category).Find(&posts).Error; err != nil {
-		log.Printf("Category not found: %v", err)
-		http.Error(w, "Category not found", http.StatusNotFound)
-		return
-	}
-
-	session, _ := store.Get(r, "session")
-	user, ok := session.Values["user"]
-	data := map[string]interface{}{
-		"Posts":    posts,
-		"User":     user,
-		"Category": category,
-	}
-	if !ok {
-		data["User"] = ""
-	}
-
-	renderTemplate(w, "category_posts", data)
-}
 
 func ViewProfile(w http.ResponseWriter, r *http.Request) {
 	log.Println("Starting ViewProfile handler")

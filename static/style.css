@@ -1,61 +1,106 @@
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f9;
+  font-family: "Roboto Mono", monospace; /* Police moderne et stylée */
+  background: linear-gradient(
+    135deg,
+    #1a1a1d,
+    #2d2d2d
+  ); /* Gradient de fond subtil */
+  color: #e6e6e6; /* Couleur du texte claire */
   margin: 0;
   padding: 0;
 }
 
 header {
-  background-color: #333;
-  color: #fff;
+  background-color: #2d2d2d; /* Couleur de fond sombre pour le header */
+  color: #f05454; /* Couleur d'accent subtile */
   padding: 1rem;
   text-align: center;
+  border-bottom: 2px solid #f05454; /* Bordure d'accent */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre subtile */
 }
 
 header h1 {
   margin: 0;
+  transition: color 0.3s;
+}
+
+header h1:hover {
+  color: #d64545; /* Changement de couleur subtile au survol */
 }
 
 nav {
-  background-color: #444;
-  color: #fff;
+  background-color: #2d2d2d; /* Couleur de fond sombre pour la navigation */
+  color: #e6e6e6;
   display: flex;
   justify-content: center;
   padding: 0.5rem;
+  border-bottom: 2px solid #f05454; /* Bordure d'accent */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre subtile */
 }
 
 nav a {
-  color: #fff;
+  color: #e6e6e6;
   margin: 0 1rem;
   text-decoration: none;
+  position: relative;
+  transition: color 0.3s;
 }
 
 nav a:hover {
-  text-decoration: underline;
+  color: #f05454; /* Couleur d'accent lors du survol */
+}
+
+nav a::before {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: #f05454;
+  visibility: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+nav a:hover::before {
+  visibility: visible;
+  width: 100%;
 }
 
 .container {
   max-width: 800px;
   margin: 2rem auto;
-  background-color: #fff;
-  padding: 1rem;
+  background-color: #2d2d2d; /* Couleur de fond sombre pour le container */
+  padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Ombre plus marquée */
 }
 
 h2 {
-  border-bottom: 2px solid #ddd;
+  border-bottom: 2px solid #f05454; /* Couleur de bordure d'accent */
   padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .post {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #3d3d3d; /* Couleur de bordure sombre */
   padding: 1rem 0;
 }
 
 .post-header {
   display: flex;
   flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+
+.post-header h3 a {
+  color: #e6e6e6;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.post-header h3 a:hover {
+  color: #f05454; /* Couleur d'accent lors du survol */
 }
 
 .post-user {
@@ -64,10 +109,10 @@ h2 {
 }
 
 .profile-picture {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 10px;
+  float: left; /* Pour aligner l'image à gauche */
+  margin-right: 10px; /* Pour ajouter un espacement à droite de l'image */
+  max-width: 100px; /* Facultatif : limitez la largeur maximale de l'image */
+  height: auto; /* Assurez-vous que l'image conserve son ratio hauteur/largeur */
 }
 
 .post-content {
@@ -87,15 +132,17 @@ h2 {
 footer {
   text-align: center;
   padding: 1rem;
-  background-color: #333;
-  color: #fff;
+  background-color: #2d2d2d; /* Couleur de fond sombre pour le footer */
+  color: #f05454; /* Couleur d'accent */
+  border-top: 2px solid #f05454; /* Bordure d'accent */
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1); /* Ombre subtile */
   position: sticky;
   bottom: 0;
   width: 100%;
 }
 
 button {
-  background-color: #5cb85c;
+  background-color: #f05454; /* Couleur d'accent pour les boutons */
   border: none;
   color: white;
   padding: 0.5rem 1rem;
@@ -106,10 +153,11 @@ button {
   margin: 0.5rem 0;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #4cae4c;
+  background-color: #d64545; /* Couleur légèrement différente au survol */
 }
 
 form {
@@ -129,8 +177,19 @@ form textarea {
   width: 100%;
   padding: 0.5rem;
   margin-bottom: 1rem;
-  border: 1px solid #ddd;
+  border: 1px solid #3d3d3d; /* Bordure sombre */
   border-radius: 4px;
+  background-color: #2d2d2d; /* Fond sombre pour les champs de formulaire */
+  color: #e6e6e6; /* Texte clair */
+  transition: border-color 0.3s;
+}
+
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="password"]:focus,
+form input[type="file"]:focus,
+form textarea:focus {
+  border-color: #f05454; /* Bordure d'accent lors du focus */
 }
 
 form button {
@@ -147,26 +206,31 @@ form button {
   align-items: center;
 }
 
-.profile-picture {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 10px;
+.profile-picture-container {
+  float: left; /* Alignement de l'image à gauche */
+  margin-right: 10px; /* Espacement à droite de l'image */
 }
 
-/* Ajoutez ce style pour le bouton de modification */
+.profile-picture {
+  max-width: 100px; /* Largeur maximale optionnelle */
+  height: auto; /* Garde le ratio hauteur/largeur */
+}
+
+.posted-by {
+  overflow: hidden; /* Permet de forcer l'élément à contenir ses flotteurs enfants */
+  margin-left: 120px; /* Marge à gauche pour dégager l'image */
+}
+
+/* Style pour le bouton de modification */
 .button {
   display: inline-block;
   padding: 0.5rem 1rem;
   margin: 0.5rem 0;
   font-size: 16px;
   color: white;
-  background-color: #5cb85c;
+  background-color: #f05454; /* Couleur d'accent pour les boutons */
   text-align: center;
   border-radius: 4px;
   text-decoration: none;
-}
-
-.button:hover {
-  background-color: #4cae4c;
+  transition: background-color 0.3s;
 }
