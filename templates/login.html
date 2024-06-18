@@ -4,17 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
-    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="/static/js/main.js" defer></script>
   </head>
   <body>
-    <header>
-      <h1>Login</h1>
+    <header class="header">
+      <h1>Gaming Universe</h1>
     </header>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/register">Register</a>
+    <nav class="nav">
+      {{if .User}}
+      <span class="welcome-message">Bienvenue, {{.User}}!</span>
+      <a href="/logout" class="nav-link">Logout</a>
+      <a href="/create-post" class="nav-link">Create Post</a>
+      {{else}}
+      <a href="/" class="nav-link">Home</a>
+      <a href="/login" class="nav-link">Login</a>
+      <a href="/register" class="nav-link">Register</a>
+      {{end}}
     </nav>
     <div class="container">
+      <h2>Login</h2>
       <form action="/login" method="post">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required />
@@ -23,7 +32,7 @@
         <button type="submit">Login</button>
       </form>
     </div>
-    <footer>
+    <footer class="footer">
       <p>&copy; 2024 Forum</p>
     </footer>
   </body>

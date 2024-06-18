@@ -4,47 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Index</title>
-    <link rel="stylesheet" href="/static/style.css" />
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".like-button").forEach(function (button) {
-          button.addEventListener("click", function (event) {
-            event.preventDefault();
-            var postId = this.dataset.postId;
-            fetch(`/post/${postId}/like`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            })
-              .then((response) => {
-                if (response.ok) {
-                  response.json().then((data) => {
-                    document.querySelector(
-                      `#like-count-${postId}`
-                    ).textContent = data.likes;
-                  });
-                }
-              })
-              .catch((error) => console.error("Error:", error));
-          });
-        });
-
-        document.querySelectorAll(".reply-button").forEach(function (button) {
-          button.addEventListener("click", function (event) {
-            event.preventDefault();
-            var postId = this.dataset.postId;
-            var replyForm = document.getElementById("reply-form-" + postId);
-            replyForm.style.display =
-              replyForm.style.display === "block" ? "none" : "block";
-          });
-        });
-      });
-    </script>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="/static/js/main.js" defer></script>
   </head>
   <body>
     <header class="header">
-      <h1>Welcome to the Forum</h1>
+      <h1>Gaming Universe</h1>
     </header>
     <nav class="nav">
       {{if .User}}

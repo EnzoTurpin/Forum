@@ -95,6 +95,9 @@ func main() {
 	r.HandleFunc("/profile/{username}/following", handlers.ViewFollowing).Methods("GET")
 	r.HandleFunc("/profile/{username}/delete", handlers.DeleteProfile).Methods("POST")
 	r.HandleFunc("/categories", handlers.Categories).Methods("GET")
+	r.HandleFunc("/post/{id}/edit", handlers.ShowEditPostForm).Methods("GET") // Nouvelle route pour afficher le formulaire d'édition
+	r.HandleFunc("/edit-post/{id}", handlers.EditPost).Methods("POST") // Nouvelle route pour modifier le post
+	r.HandleFunc("/delete-post/{id}", handlers.DeletePost).Methods("POST") // Nouvelle route pour supprimer le post
 
 	// Servir les fichiers statiques (HTML, CSS, JS)
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))

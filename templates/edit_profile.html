@@ -4,16 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Profile</title>
-    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="/static/js/main.js" defer></script>
   </head>
   <body>
-    <header>
-      <h1>Edit Profile</h1>
+    <header class="header">
+      <h1>Gaming Universe</h1>
     </header>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/profile/{{.User.Username}}">Back to Profile</a>
-      <a href="/logout">Logout</a>
+    <nav class="nav">
+      {{if .User}}
+      <span class="welcome-message"
+        >Bienvenue,
+        <a href="/profile/{{.User.Username}}">{{.User.Username}}</a>!</span
+      >
+      <a href="/logout" class="nav-link">Logout</a>
+      <a href="/create-post" class="nav-link">Create Post</a>
+      {{else}}
+      <a href="/" class="nav-link">Home</a>
+      <a href="/login" class="nav-link">Login</a>
+      <a href="/register" class="nav-link">Register</a>
+      {{end}}
+      <a href="/profile/{{.User.Username}}" class="nav-link">Back to Profile</a>
     </nav>
     <div class="container">
       <h2>Edit your profile</h2>
@@ -67,7 +78,7 @@
         </button>
       </form>
     </div>
-    <footer>
+    <footer class="footer">
       <p>&copy; 2024 Forum</p>
     </footer>
   </body>

@@ -4,52 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{.Post.Title}}</title>
-    <link rel="stylesheet" href="/static/style.css" />
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        document
-          .querySelectorAll(".like-comment-button")
-          .forEach(function (button) {
-            button.addEventListener("click", function (event) {
-              event.preventDefault();
-              var postId = this.dataset.postId;
-              var commentId = this.dataset.commentId;
-              fetch(`/post/${postId}/comment/${commentId}/like`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              })
-                .then((response) => {
-                  if (response.ok) {
-                    response.json().then((data) => {
-                      document.querySelector(
-                        `#like-count-comment-${commentId}`
-                      ).textContent = data.likes;
-                    });
-                  }
-                })
-                .catch((error) => console.error("Error:", error));
-            });
-          });
-      });
-    </script>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="/static/js/main.js" defer></script>
   </head>
   <body>
-    <header>
-      <h1>{{.Post.Title}}</h1>
+    <header class="header">
+      <h1>Gaming Universe</h1>
     </header>
-    <nav>
-      <a href="/">Home</a>
+    <nav class="nav">
       {{if .User}}
-      <a href="/logout">Logout</a>
+      <span class="welcome-message">Bienvenue, {{.User}}!</span>
+      <a href="/logout" class="nav-link">Logout</a>
+      <a href="/create-post" class="nav-link">Create Post</a>
       {{else}}
-      <a href="/login">Login</a>
-      <a href="/register">Register</a>
+      <a href="/" class="nav-link">Home</a>
+      <a href="/login" class="nav-link">Login</a>
+      <a href="/register" class="nav-link">Register</a>
       {{end}}
     </nav>
     <div class="container">
-      <h2>Post Details</h2>
+      <h2>{{.Post.Title}}</h2>
       <p>{{.Post.Content}}</p>
       <p>
         <em
@@ -118,7 +92,7 @@
       </div>
       {{end}}
     </div>
-    <footer>
+    <footer class="footer">
       <p>&copy; 2024 Forum</p>
     </footer>
   </body>
