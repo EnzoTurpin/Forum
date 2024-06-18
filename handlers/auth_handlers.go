@@ -55,48 +55,26 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Create a new user instance
-		user := models.User{
-			Username:          r.FormValue("username"),
-			Email:             r.FormValue("email"),
-			Password:          r.FormValue("password"),
-			SecurityQuestion1: r.FormValue("securityQuestion1"),
-			SecurityAnswer1:   r.FormValue("securityAnswer1"),
-			SecurityQuestion2: r.FormValue("securityQuestion2"),
-			SecurityAnswer2:   r.FormValue("securityAnswer2"),
-			SecurityQuestion3: r.FormValue("securityQuestion3"),
-			SecurityAnswer3:   r.FormValue("securityAnswer3"),
-		}
+		// Extract form values
+		username := r.FormValue("username")
+		email := r.FormValue("email")
+		password := r.FormValue("password")
 
-		// Log the form values
-		log.Printf("Parsed form values - Username: %s, Email: %s", user.Username, user.Email)
-
-		// Validate form values
-		if user.Username == "" || user.Email == "" || user.Password == "" ||
-			user.SecurityQuestion1 == "" || user.SecurityAnswer1 == "" ||
-			user.SecurityQuestion2 == "" || user.SecurityAnswer2 == "" ||
-			user.SecurityQuestion3 == "" || user.SecurityAnswer3 == "" {
-			log.Println("Missing required form values")
-			data := map[string]interface{}{
-				"Error": "Missing required form values",
-			}
-			renderTemplate(w, "register", data)
-			return
-		}
-
-		// Check if the username already exists
+		// Check if username or email already exists
 		var existingUser models.User
-		if err := db.Where("username = ?", user.Username).First(&existingUser).Error; err == nil {
-			log.Println("Username already in use")
+		if err := db.Where("username = ? OR email = ?", username, email).First(&existingUser).Error; err != gorm.ErrRecordNotFound {
+			log.Printf("Username or Email already in use: %v", err)
 			data := map[string]interface{}{
-				"UsernameError": "Username already in use",
+				"Error":    "Username or Email already exists",
+				"Username": username,
+				"Email":    email,
 			}
 			renderTemplate(w, "register", data)
 			return
 		}
 
 		// Validate password robustness
-		if err := validatePassword(user.Password); err != nil {
+		if err := validatePassword(password); err != nil {
 			log.Printf("Password validation failed: %v", err)
 			data := map[string]interface{}{
 				"PasswordError": err.Error(),
@@ -106,24 +84,29 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Hash the password
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err != nil {
 			log.Printf("Error hashing password: %v", err)
 			http.Error(w, "Error hashing password", http.StatusInternalServerError)
 			return
 		}
-		user.Password = string(hashedPassword)
 
-		// Use a transaction to create the user
-		result := db.Transaction(func(tx *gorm.DB) error {
-			if err := tx.Create(&user).Error; err != nil {
-				return err
-			}
-			return nil
-		})
+		// Create a new user instance and save it to the database
+		user := models.User{
+			Username: username,
+			Email:    email,
+			Password: string(hashedPassword),
+			// Assuming security questions and answers are also provided in the form
+			SecurityQuestion1: r.FormValue("securityQuestion1"),
+			SecurityAnswer1:   r.FormValue("securityAnswer1"),
+			SecurityQuestion2: r.FormValue("securityQuestion2"),
+			SecurityAnswer2:   r.FormValue("securityAnswer2"),
+			SecurityQuestion3: r.FormValue("securityQuestion3"),
+			SecurityAnswer3:   r.FormValue("securityAnswer3"),
+		}
 
-		if result != nil {
-			log.Printf("Unable to register user: %v", result)
+		if err := db.Create(&user).Error; err != nil {
+			log.Printf("Unable to register user: %v", err)
 			data := map[string]interface{}{
 				"Error": "Unable to register user",
 			}
@@ -134,7 +117,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		log.Printf("User registered successfully with ID: %d", user.ID)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	} else {
-		log.Println("Rendering registration template")
 		renderTemplate(w, "register", nil)
 	}
 }
@@ -224,7 +206,6 @@ func RegisterStep1(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		log.Println("Handling POST request for registration step 1")
 
-		// Parse the form data
 		if err := r.ParseForm(); err != nil {
 			log.Printf("Error parsing form: %v", err)
 			http.Error(w, "Error parsing form", http.StatusBadRequest)
@@ -235,7 +216,6 @@ func RegisterStep1(w http.ResponseWriter, r *http.Request) {
 		email := r.FormValue("email")
 		password := r.FormValue("password")
 
-		// Validate form values
 		if username == "" || email == "" || password == "" {
 			log.Println("Missing required form values")
 			data := map[string]interface{}{
@@ -245,22 +225,37 @@ func RegisterStep1(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Check if the username already exists
 		var existingUser models.User
-		if err := db.Where("username = ?", username).First(&existingUser).Error; err == nil {
-			log.Println("Username already in use")
+		// Check if the email already exists
+		if err := db.Where("email = ?", email).First(&existingUser).Error; err == nil {
+			log.Println("Email already in use")
 			data := map[string]interface{}{
-				"UsernameError": "Username already in use",
+				"EmailError": "Email already in use",
+				"Username":   username,
+				"Email":      email,
 			}
 			renderTemplate(w, "register", data)
 			return
 		}
 
-		// Validate password robustness
+		// Check if the username already exists
+		if err := db.Where("username = ?", username).First(&existingUser).Error; err == nil {
+			log.Println("Username already in use")
+			data := map[string]interface{}{
+				"UsernameError": "Username already in use",
+				"Username":      username,
+				"Email":         email,
+			}
+			renderTemplate(w, "register", data)
+			return
+		}
+
 		if err := validatePassword(password); err != nil {
 			log.Printf("Password validation failed: %v", err)
 			data := map[string]interface{}{
 				"PasswordError": err.Error(),
+				"Username":      username,
+				"Email":         email,
 			}
 			renderTemplate(w, "register", data)
 			return
