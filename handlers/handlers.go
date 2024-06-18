@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gorilla/sessions"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -84,4 +85,61 @@ func PageIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	renderTemplate(w, "index", data)
+}
+
+// ForgotPassword handles the process of requesting a password reset
+func ForgotPassword(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		email := r.FormValue("email")
+
+		var user models.User
+		if err := db.Where("email = ?", email).First(&user).Error; err != nil {
+			http.Error(w, "User not found", http.StatusNotFound)
+			return
+		}
+
+		// Render the security questions page with the user data
+		data := map[string]interface{}{
+			"Email": email,
+		}
+		renderTemplate(w, "security_questions_reset", data)
+		return
+	}
+	renderTemplate(w, "forgot_password", nil)
+}
+
+// ResetPassword handles the process of resetting the password
+func ResetPassword(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		email := r.FormValue("email")
+		securityAnswer1 := r.FormValue("securityAnswer1")
+		securityAnswer2 := r.FormValue("securityAnswer2")
+		securityAnswer3 := r.FormValue("securityAnswer3")
+		newPassword := r.FormValue("newPassword")
+
+		var user models.User
+		if err := db.Where("email = ?", email).First(&user).Error; err != nil {
+			http.Error(w, "User not found", http.StatusNotFound)
+			return
+		}
+
+		if user.SecurityAnswer1 != securityAnswer1 || user.SecurityAnswer2 != securityAnswer2 || user.SecurityAnswer3 != securityAnswer3 {
+			http.Error(w, "Security answers do not match", http.StatusUnauthorized)
+			return
+		}
+
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+		if err != nil {
+			http.Error(w, "Error hashing password", http.StatusInternalServerError)
+			return
+		}
+
+		user.Password = string(hashedPassword)
+		if err := db.Save(&user).Error; err != nil {
+			http.Error(w, "Error updating password", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	}
 }

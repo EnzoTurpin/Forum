@@ -57,16 +57,25 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 		// Create a new user instance
 		user := models.User{
-			Username: r.FormValue("username"),
-			Email:    r.FormValue("email"),
-			Password: r.FormValue("password"),
+			Username:          r.FormValue("username"),
+			Email:             r.FormValue("email"),
+			Password:          r.FormValue("password"),
+			SecurityQuestion1: r.FormValue("securityQuestion1"),
+			SecurityAnswer1:   r.FormValue("securityAnswer1"),
+			SecurityQuestion2: r.FormValue("securityQuestion2"),
+			SecurityAnswer2:   r.FormValue("securityAnswer2"),
+			SecurityQuestion3: r.FormValue("securityQuestion3"),
+			SecurityAnswer3:   r.FormValue("securityAnswer3"),
 		}
 
 		// Log the form values
 		log.Printf("Parsed form values - Username: %s, Email: %s", user.Username, user.Email)
 
 		// Validate form values
-		if user.Username == "" || user.Email == "" || user.Password == "" {
+		if user.Username == "" || user.Email == "" || user.Password == "" ||
+			user.SecurityQuestion1 == "" || user.SecurityAnswer1 == "" ||
+			user.SecurityQuestion2 == "" || user.SecurityAnswer2 == "" ||
+			user.SecurityQuestion3 == "" || user.SecurityAnswer3 == "" {
 			log.Println("Missing required form values")
 			data := map[string]interface{}{
 				"Error": "Missing required form values",
@@ -207,4 +216,129 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("User logged out successfully")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func RegisterStep1(w http.ResponseWriter, r *http.Request) {
+	log.Println("Starting Register Step 1 handler")
+
+	if r.Method == http.MethodPost {
+		log.Println("Handling POST request for registration step 1")
+
+		// Parse the form data
+		if err := r.ParseForm(); err != nil {
+			log.Printf("Error parsing form: %v", err)
+			http.Error(w, "Error parsing form", http.StatusBadRequest)
+			return
+		}
+
+		username := r.FormValue("username")
+		email := r.FormValue("email")
+		password := r.FormValue("password")
+
+		// Validate form values
+		if username == "" || email == "" || password == "" {
+			log.Println("Missing required form values")
+			data := map[string]interface{}{
+				"Error": "Missing required form values",
+			}
+			renderTemplate(w, "register", data)
+			return
+		}
+
+		// Check if the username already exists
+		var existingUser models.User
+		if err := db.Where("username = ?", username).First(&existingUser).Error; err == nil {
+			log.Println("Username already in use")
+			data := map[string]interface{}{
+				"UsernameError": "Username already in use",
+			}
+			renderTemplate(w, "register", data)
+			return
+		}
+
+		// Validate password robustness
+		if err := validatePassword(password); err != nil {
+			log.Printf("Password validation failed: %v", err)
+			data := map[string]interface{}{
+				"PasswordError": err.Error(),
+			}
+			renderTemplate(w, "register", data)
+			return
+		}
+
+		data := map[string]interface{}{
+			"Username": username,
+			"Email":    email,
+			"Password": password,
+		}
+		renderTemplate(w, "security_questions", data)
+	} else {
+		log.Println("Rendering registration step 1 template")
+		renderTemplate(w, "register", nil)
+	}
+}
+
+func RegisterStep2(w http.ResponseWriter, r *http.Request) {
+	log.Println("Starting Register Step 2 handler")
+
+	if r.Method == http.MethodPost {
+		log.Println("Handling POST request for registration step 2")
+
+		// Parse the form data
+		if err := r.ParseForm(); err != nil {
+			log.Printf("Error parsing form: %v", err)
+			http.Error(w, "Error parsing form", http.StatusBadRequest)
+			return
+		}
+
+		username := r.FormValue("username")
+		email := r.FormValue("email")
+		password := r.FormValue("password")
+		securityAnswer1 := r.FormValue("securityAnswer1")
+		securityAnswer2 := r.FormValue("securityAnswer2")
+		securityAnswer3 := r.FormValue("securityAnswer3")
+
+		// Hash the password
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			log.Printf("Error hashing password: %v", err)
+			http.Error(w, "Error hashing password", http.StatusInternalServerError)
+			return
+		}
+
+		// Create a new user instance
+		user := models.User{
+			Username:          username,
+			Email:             email,
+			Password:          string(hashedPassword),
+			SecurityQuestion1: "What is your mother's maiden name?",
+			SecurityAnswer1:   securityAnswer1,
+			SecurityQuestion2: "What was the name of your first pet?",
+			SecurityAnswer2:   securityAnswer2,
+			SecurityQuestion3: "What is your favorite book?",
+			SecurityAnswer3:   securityAnswer3,
+		}
+
+		// Use a transaction to create the user
+		result := db.Transaction(func(tx *gorm.DB) error {
+			if err := tx.Create(&user).Error; err != nil {
+				return err
+			}
+			return nil
+		})
+
+		if result != nil {
+			log.Printf("Unable to register user: %v", result)
+			data := map[string]interface{}{
+				"Error": "Unable to register user",
+			}
+			renderTemplate(w, "security_questions", data)
+			return
+		}
+
+		log.Printf("User registered successfully with ID: %d", user.ID)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	} else {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
 }
