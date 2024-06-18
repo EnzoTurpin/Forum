@@ -4,29 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile of {{.ProfileUser.Username}}</title>
-    <link rel="stylesheet" href="/static/css/style.css" />
-    <script src="/static/js/main.js" defer></script>
+    <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
-    <header class="header">
-      <h1>Gaming Universe</h1>
+    <header>
+      <h1>Profile of {{.ProfileUser.Username}}</h1>
     </header>
-    <nav class="nav">
+    <nav>
+      <a href="/">Home</a>
       {{if .CurrentUser}}
-      <span class="welcome-message"
+      <span
         >Bienvenue,
         <a href="/profile/{{.CurrentUser}}">{{.CurrentUser}}</a>!</span
       >
-      <a href="/logout" class="nav-link">Logout</a>
-      <a href="/create-post" class="nav-link">Create Post</a>
+      <a href="/logout">Logout</a>
       {{else}}
-      <a href="/" class="nav-link">Home</a>
-      <a href="/login" class="nav-link">Login</a>
-      <a href="/register" class="nav-link">Register</a>
+      <a href="/login">Login</a>
+      <a href="/register">Register</a>
       {{end}}
     </nav>
     <div class="container">
-      <h1>Profile of {{.ProfileUser.Username}}</h1>
       <div class="profile-picture">
         {{if .ProfileUser.ProfilePicture}}
         <img
@@ -48,6 +45,12 @@
         <h3>{{.Title}}</h3>
         <p>{{.Content}}</p>
         <p><em>Posted {{.TimeAgo}}</em></p>
+        {{if eq $.CurrentUserID .UserID}}
+        <a href="/post/{{.ID}}/edit" class="button">Edit Post</a>
+        <form action="/delete-post/{{.ID}}" method="post" style="display:inline;">
+          <button type="submit" class="button">Delete Post</button>
+        </form>
+        {{end}}
       </div>
       {{else}}
       <p>No posts available</p>
@@ -68,7 +71,8 @@
       <a href="/profile/{{.ProfileUser.Username}}/edit" class="button"
         >Edit Profile</a
       >
-      {{else}} {{if .IsFollowing}}
+      {{else}} 
+      {{if .IsFollowing}}
       <form action="/profile/{{.ProfileUser.Username}}/unfollow" method="post">
         <button type="submit">Unfollow</button>
       </form>
@@ -76,9 +80,10 @@
       <form action="/profile/{{.ProfileUser.Username}}/follow" method="post">
         <button type="submit">Follow</button>
       </form>
-      {{end}} {{end}}
+      {{end}} 
+      {{end}}
     </div>
-    <footer class="footer">
+    <footer>
       <p>&copy; 2024 Forum</p>
     </footer>
   </body>
