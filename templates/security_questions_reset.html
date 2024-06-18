@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reset Password</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <h1>Gaming Universe</h1>
+    </header>
+    <nav class="nav">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/login" class="nav-link">Login</a>
+      <a href="/register" class="nav-link">Register</a>
+    </nav>
+    <div class="container">
+      <h2>Reset Password</h2>
+      <form action="/reset-password" method="post">
+        <input type="hidden" name="email" value="{{.Email}}" />
+        <label for="securityAnswer">{{.Question}}</label>
+        <input type="text" id="securityAnswer" name="securityAnswer" required />
+        {{if .SecurityError}}
+        <p style="color: red">{{.SecurityError}}</p>
+        {{end}}
+        <label for="newPassword">New Password:</label>
+        <input type="password" id="newPassword" name="newPassword" required />
+        {{if .PasswordError}}
+        <p style="color: red">{{.PasswordError}}</p>
+        {{end}}
+        <button type="submit">Reset Password</button>
+      </form>
+    </div>
+    <footer class="footer">
+      <p>&copy; 2024 Forum</p>
+    </footer>
+  </body>
+</html>

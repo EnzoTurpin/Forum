@@ -5,6 +5,7 @@ import (
 	"forum/models"
 	"html/template"
 	"log"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -98,9 +99,32 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Render the security questions page with the user data
+		// Sélectionner une question de sécurité aléatoire
+		questions := []string{
+			user.SecurityQuestion1,
+			user.SecurityQuestion2,
+			user.SecurityQuestion3,
+		}
+		answers := []string{
+			user.SecurityAnswer1,
+			user.SecurityAnswer2,
+			user.SecurityAnswer3,
+		}
+
+		rand.Seed(time.Now().UnixNano())
+		idx := rand.Intn(len(questions))
+
+		// Stocker la question sélectionnée dans la session
+		session, _ := store.Get(r, "session")
+		session.Values["reset_email"] = email
+		session.Values["security_question"] = questions[idx]
+		session.Values["security_answer"] = answers[idx]
+		session.Save(r, w)
+
+		// Passer la question sélectionnée au template
 		data := map[string]interface{}{
-			"Email": email,
+			"Email":    email,
+			"Question": questions[idx],
 		}
 		renderTemplate(w, "security_questions_reset", data)
 		return
@@ -108,13 +132,14 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "forgot_password", nil)
 }
 
-// ResetPassword handles the process of resetting the password
 func ResetPassword(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		email := r.FormValue("email")
-		securityAnswer1 := r.FormValue("securityAnswer1")
-		securityAnswer2 := r.FormValue("securityAnswer2")
-		securityAnswer3 := r.FormValue("securityAnswer3")
+		session, _ := store.Get(r, "session")
+		email := session.Values["reset_email"].(string)
+		correctAnswer := session.Values["security_answer"].(string)
+		question := session.Values["security_question"].(string)
+
+		securityAnswer := r.FormValue("securityAnswer")
 		newPassword := r.FormValue("newPassword")
 
 		var user models.User
@@ -123,11 +148,31 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if user.SecurityAnswer1 != securityAnswer1 || user.SecurityAnswer2 != securityAnswer2 || user.SecurityAnswer3 != securityAnswer3 {
-			http.Error(w, "Security answers do not match", http.StatusUnauthorized)
+		// Vérifier que la réponse de sécurité est correcte
+		if correctAnswer != securityAnswer {
+			data := map[string]interface{}{
+				"Email":         email,
+				"Question":      question,
+				"SecurityError": "Security answer does not match",
+				"PasswordError": "",
+			}
+			renderTemplate(w, "security_questions_reset", data)
 			return
 		}
 
+		// Vérifier que le nouveau mot de passe n'est pas le même que l'actuel
+		if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(newPassword)) == nil {
+			data := map[string]interface{}{
+				"Email":         email,
+				"Question":      question,
+				"SecurityError": "",
+				"PasswordError": "New password cannot be the same as the current password",
+			}
+			renderTemplate(w, "security_questions_reset", data)
+			return
+		}
+
+		// Hasher le nouveau mot de passe
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
 		if err != nil {
 			http.Error(w, "Error hashing password", http.StatusInternalServerError)
