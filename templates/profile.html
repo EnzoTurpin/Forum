@@ -45,6 +45,12 @@
         <h3>{{.Title}}</h3>
         <p>{{.Content}}</p>
         <p><em>Posted {{.TimeAgo}}</em></p>
+        {{if eq $.CurrentUserID .UserID}}
+        <a href="/post/{{.ID}}/edit" class="button">Edit Post</a>
+        <form action="/delete-post/{{.ID}}" method="post" style="display:inline;">
+          <button type="submit" class="button">Delete Post</button>
+        </form>
+        {{end}}
       </div>
       {{else}}
       <p>No posts available</p>
@@ -65,7 +71,8 @@
       <a href="/profile/{{.ProfileUser.Username}}/edit" class="button"
         >Edit Profile</a
       >
-      {{else}} {{if .IsFollowing}}
+      {{else}} 
+      {{if .IsFollowing}}
       <form action="/profile/{{.ProfileUser.Username}}/unfollow" method="post">
         <button type="submit">Unfollow</button>
       </form>
@@ -73,7 +80,8 @@
       <form action="/profile/{{.ProfileUser.Username}}/follow" method="post">
         <button type="submit">Follow</button>
       </form>
-      {{end}} {{end}}
+      {{end}} 
+      {{end}}
     </div>
     <footer>
       <p>&copy; 2024 Forum</p>
