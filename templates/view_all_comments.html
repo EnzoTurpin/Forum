@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comments</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <h2>{{.Post.Title}}</h2>
+    <p>{{.Post.Content}}</p>
+    <p>
+      <em
+        >Posted by
+        <a href="/profile/{{.Post.User.Username}}"
+          >{{.Post.User.Username}}</a
+        ></em
+      >
+    </p>
+    <div class="comments-section">
+      <h3>All Comments</h3>
+      {{range .Post.Comments}}
+      <div class="comment">
+        <p>{{.Content}}</p>
+        <p>
+          <em
+            >Commented by
+            <a href="/profile/{{.User.Username}}">{{.User.Username}}</a></em
+          >
+        </p>
+      </div>
+      {{else}}
+      <p>No comments yet</p>
+      {{end}}
+    </div>
+  </body>
+</html>

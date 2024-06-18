@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Followers of {{.ProfileUser.Username}}</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="/static/js/main.js" defer></script>
+  </head>
+  <body>
+    <header class="header">
+      <h1>Welcome to the Forum</h1>
+    </header>
+    <nav class="nav">
+      {{if .CurrentUser}}
+      <span class="welcome-message"
+        >Bienvenue,
+        <a href="/profile/{{.CurrentUser}}">{{.CurrentUser}}</a>!</span
+      >
+      <a href="/logout" class="nav-link">Logout</a>
+      <a href="/create-post" class="nav-link">Create Post</a>
+      {{else}}
+      <a href="/" class="nav-link">Home</a>
+      <a href="/login" class="nav-link">Login</a>
+      <a href="/register" class="nav-link">Register</a>
+      {{end}}
+    </nav>
+    <div class="container">
+      <h1>Followers of {{.ProfileUser.Username}}</h1>
+      <h2>Followers</h2>
+      <ul>
+        {{range .Followers}}
+        <li>
+          <a href="/profile/{{.Follower.Username}}">{{.Follower.Username}}</a>
+        </li>
+        {{end}}
+      </ul>
+    </div>
+    <footer class="footer">
+      <p>&copy; 2024 Forum</p>
+    </footer>
+  </body>
+</html>

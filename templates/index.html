@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="/static/js/main.js" defer></script>
+  </head>
+  <body>
+    <header class="header">
+      <h1>Gaming Universe</h1>
+    </header>
+    <nav class="nav">
+      {{if .User}}
+      <span class="welcome-message">Bienvenue, {{.User}}!</span>
+      <a href="/logout" class="nav-link">Logout</a>
+      <a href="/create-post" class="nav-link">Create Post</a>
+      {{else}}
+      <a href="/login" class="nav-link">Login</a>
+      <a href="/register" class="nav-link">Register</a>
+      {{end}}
+    </nav>
+    <div class="container">
+      <h2 class="posts-title">Posts</h2>
+      <form method="get" action="/">
+        <label for="categories">Select Categories:</label>
+        <div id="categories">
+          {{range .Categories}}
+          <label>
+            <input type="checkbox" name="categories" value="{{.ID}}" />
+            {{.Name}} </label
+          ><br />
+          {{end}}
+        </div>
+        <button type="submit">Filter</button>
+      </form>
+      {{range .Posts}}
+      <div class="post">
+        <div class="post-header">
+          <h3><a href="/post/{{.ID}}" class="post-link">{{.Title}}</a></h3>
+        </div>
+        <div class="post-user">
+          <div class="profile-picture">
+            {{if .User.ProfilePicture}}
+            <img
+              src="/{{.User.ProfilePicture}}"
+              alt="Profile Picture"
+              class="profile-picture"
+            />
+            {{else}}
+            <img
+              src="/static/img/default-picture.png"
+              alt="Default Profile Picture"
+              class="profile-picture"
+            />
+            {{end}}
+          </div>
+          <div class="post-meta">
+            <div class="username">
+              <a href="/profile/{{.User.Username}}" class="username-link"
+                >{{.User.Username}}</a
+              >
+            </div>
+            <div class="time-ago">Posté {{.TimeAgo}}</div>
+          </div>
+        </div>
+        <div class="post-content">
+          <p>{{.Content}}</p>
+          <p>Likes: <span id="like-count-{{.ID}}">{{.Likes}}</span></p>
+        </div>
+        <div class="post-footer">
+          <div>
+            <button class="like-button" data-post-id="{{.ID}}">❤️</button>
+            <button class="reply-button" data-post-id="{{.ID}}">
+              Répondre
+            </button>
+          </div>
+        </div>
+        <div class="comments-section">
+          <h4>Commentaires</h4>
+          {{range $index, $comment := .Comments}} {{if lt $index 2}}
+          <div class="comment">
+            <p>{{.Content}}</p>
+            <p>
+              <em
+                >Commented by
+                <a href="/profile/{{.User.Username}}">{{.User.Username}}</a></em
+              >
+            </p>
+          </div>
+          {{end}} {{end}} {{if gt (len .Comments) 2}}
+          <a href="/post/{{.ID}}" class="view-comments-link"
+            >Voir tous les commentaires</a
+          >
+          {{end}}
+        </div>
+        {{if .User}}
+        <div id="reply-form-{{.ID}}" class="reply-form" style="display: none">
+          <form action="/post/{{.ID}}/comment" method="post">
+            <textarea name="content" required></textarea>
+            <button type="submit">Submit Comment</button>
+          </form>
+        </div>
+        {{end}}
+      </div>
+      {{else}}
+      <p>No posts available</p>
+      {{end}}
+    </div>
+    <footer class="footer">
+      <p>&copy; 2024 Forum</p>
+    </footer>
+  </body>
+</html>

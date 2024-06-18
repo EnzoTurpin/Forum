@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="/static/js/main.js" defer></script>
+  </head>
+  <body>
+    <header class="header">
+      <h1>WGaming Universe</h1>
+    </header>
+    <nav class="nav">
+      {{if .User}}
+      <span class="welcome-message">Bienvenue, {{.User}}!</span>
+      <a href="/logout" class="nav-link">Logout</a>
+      <a href="/create-post" class="nav-link">Create Post</a>
+      {{else}}
+      <a href="/" class="nav-link">Home</a>
+      <a href="/login" class="nav-link">Login</a>
+      {{end}}
+    </nav>
+    <div class="container">
+      <h2>Register</h2>
+      <form action="/register" method="post">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required />
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required />
+        {{if .UsernameError}}
+        <p style="color: red">{{.UsernameError}}</p>
+        {{end}}
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required />
+        {{if .PasswordError}}
+        <p style="color: red">{{.PasswordError}}</p>
+        {{end}}
+        <button type="submit">Register</button>
+      </form>
+    </div>
+    <footer class="footer">
+      <p>&copy; 2024 Forum</p>
+    </footer>
+  </body>
+</html>

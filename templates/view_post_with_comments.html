@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{.Post.Title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>{{.Post.Title}}</h1>
+    </header>
+    <nav>
+      <a href="/">Home</a>
+      {{if .User}}
+      <a href="/logout">Logout</a>
+      {{else}}
+      <a href="/login">Login</a>
+      <a href="/register">Register</a>
+      {{end}}
+    </nav>
+    <div class="container">
+      <h2>Post Details</h2>
+      <p>{{.Post.Content}}</p>
+      <p>
+        <em
+          >Posted by
+          <a href="/profile/{{.Post.User.Username}}"
+            >{{.Post.User.Username}}</a
+          ></em
+        >
+      </p>
+      <div class="profile-picture">
+        {{if .Post.User.ProfilePicture}}
+        <img
+          src="/{{.Post.User.ProfilePicture}}"
+          alt="Profile Picture"
+          class="profile-picture"
+        />
+        {{else}}
+        <img
+          src="/static/img/default-picture.png"
+          alt="Default Profile Picture"
+          class="profile-picture"
+        />
+        {{end}}
+      </div>
+      <p>Likes: {{.Post.Likes}}</p>
+      {{if .User}}
+      <form action="/post/{{.Post.ID}}/like" method="post">
+        <button type="submit">Like</button>
+      </form>
+      {{end}}
+
+      <h3>Comments</h3>
+      <div class="comments-section">
+        {{range .Post.Comments}}
+        <div class="comment">
+          <p>{{.Content}}</p>
+          <p>
+            <em
+              >Commented by
+              <a href="/profile/{{.User.Username}}">{{.User.Username}}</a></em
+            >
+          </p>
+        </div>
+        {{else}}
+        <p>No comments yet</p>
+        {{end}}
+      </div>
+      {{if .User}}
+      <h3>Add a Comment</h3>
+      <div id="reply-form-{{.Post.ID}}" class="reply-form">
+        <form action="/post/{{.Post.ID}}/comment" method="post">
+          <textarea name="content" required></textarea>
+          <button type="submit">Submit Comment</button>
+        </form>
+      </div>
+      {{end}}
+    </div>
+    <footer>
+      <p>&copy; 2024 Forum</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="/static/js/main.js" defer></script>
+  </head>
+  <body>
+    <header class="header">
+      <h1>Gaming Universe</h1>
+    </header>
+    <nav class="nav">
+      {{if .User}}
+      <span class="welcome-message"
+        >Bienvenue,
+        <a href="/profile/{{.User.Username}}">{{.User.Username}}</a>!</span
+      >
+      <a href="/logout" class="nav-link">Logout</a>
+      <a href="/create-post" class="nav-link">Create Post</a>
+      {{else}}
+      <a href="/" class="nav-link">Home</a>
+      <a href="/login" class="nav-link">Login</a>
+      <a href="/register" class="nav-link">Register</a>
+      {{end}}
+      <a href="/profile/{{.User.Username}}" class="nav-link">Back to Profile</a>
+    </nav>
+    <div class="container">
+      <h2>Edit your profile</h2>
+      <form
+        id="edit-profile-form"
+        action="/profile/{{.User.Username}}/edit"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <label for="username">Username:</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          value="{{.User.Username}}"
+          required
+        />
+        {{if .UsernameError}}
+        <p style="color: red">{{.UsernameError}}</p>
+        {{end}}
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value="{{.User.Email}}"
+          required
+        />
+        {{if .EmailError}}
+        <p style="color: red">{{.EmailError}}</p>
+        {{end}}
+        <label for="password"
+          >New Password (leave blank to keep current password):</label
+        >
+        <input type="password" id="password" name="password" />
+        {{if .PasswordError}}
+        <p style="color: red">{{.PasswordError}}</p>
+        {{end}}
+        <label for="profile_picture">Profile Picture:</label>
+        <input type="file" id="profile_picture" name="profile_picture" />
+        <button type="submit">Save Changes</button>
+      </form>
+      <form
+        id="delete-profile-form"
+        action="/profile/{{.User.Username}}/delete"
+        method="post"
+        onsubmit="return confirm('Are you sure you want to delete your profile? This action cannot be undone.');"
+      >
+        <button type="submit" style="background-color: red; color: white">
+          Delete Profile
+        </button>
+      </form>
+    </div>
+    <footer class="footer">
+      <p>&copy; 2024 Forum</p>
+    </footer>
+  </body>
+</html>
