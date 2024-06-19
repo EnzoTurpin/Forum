@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 )
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
@@ -21,18 +22,25 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		log.Println("Handling POST request for creating a post")
 		r.ParseForm()
-		categoryID, err := strconv.ParseUint(r.FormValue("category"), 10, 32)
-		if err != nil {
-			log.Printf("Invalid category ID: %v", err)
-			http.Error(w, "Invalid category ID", http.StatusBadRequest)
-			return
-		}
+		title := r.FormValue("title")
+		content := r.FormValue("content")
+		categoryIDs := r.Form["categories[]"]
+
 		post := models.Post{
-			Title:      r.FormValue("title"),
-			Content:    r.FormValue("content"),
-			CategoryID: uint(categoryID),
-			UserID:     userID.(uint),
+			Title:   title,
+			Content: content,
+			UserID:  userID.(uint),
 		}
+
+		for _, c := range categoryIDs {
+			id, err := strconv.ParseUint(c, 10, 32)
+			if err != nil {
+				log.Printf("Invalid category ID: %v", err)
+				continue
+			}
+			post.Categories = append(post.Categories, models.Category{Model: gorm.Model{ID: uint(id)}})
+		}
+
 		result := db.Create(&post)
 		if result.Error != nil {
 			log.Printf("Unable to create post: %v", result.Error)
@@ -59,7 +67,7 @@ func ViewPost(w http.ResponseWriter, r *http.Request) {
 	log.Println("Starting ViewPost handler")
 	vars := mux.Vars(r)
 	var post models.Post
-	if err := db.Preload("User").Preload("Comments.User").First(&post, vars["id"]).Error; err != nil {
+	if err := db.Preload("User").Preload("Comments.User").Preload("Categories").First(&post, vars["id"]).Error; err != nil {
 		log.Printf("Post not found: %v", err)
 		http.NotFound(w, r)
 		return
@@ -137,7 +145,7 @@ func ShowEditPostForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var post models.Post
-	if err := db.First(&post, postID).Error; err != nil {
+	if err := db.Preload("Categories").First(&post, postID).Error; err != nil {
 		log.Printf("Post not found: %v", err)
 		http.NotFound(w, r)
 		return
@@ -182,7 +190,7 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var post models.Post
-	if err := db.First(&post, postID).Error; err != nil {
+	if err := db.Preload("Categories").First(&post, postID).Error; err != nil {
 		log.Printf("Post not found: %v", err)
 		http.NotFound(w, r)
 		return
@@ -194,26 +202,34 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	r.ParseForm()
-	categoryID, err := strconv.ParseUint(r.FormValue("category"), 10, 32)
-	if err != nil {
-		log.Printf("Invalid category ID: %v", err)
-		http.Error(w, "Invalid category ID", http.StatusBadRequest)
-		return
+	if r.Method == http.MethodPost {
+		r.ParseForm()
+		var categories []models.Category
+		categoryIDs := r.Form["categories[]"]
+		for _, idStr := range categoryIDs {
+			id, err := strconv.ParseUint(idStr, 10, 32)
+			if err != nil {
+				continue
+			}
+			var category models.Category
+			if db.First(&category, uint(id)).Error == nil {
+				categories = append(categories, category)
+			}
+		}
+
+		post.Title = r.FormValue("title")
+		post.Content = r.FormValue("content")
+		post.Categories = categories
+
+		if db.Save(&post).Error != nil {
+			log.Printf("Unable to update post: %v", err)
+			http.Error(w, "Unable to update post", http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, "/post/"+vars["id"], http.StatusSeeOther)
+	} else {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
-
-	post.Title = r.FormValue("title")
-	post.Content = r.FormValue("content")
-	post.CategoryID = uint(categoryID)
-
-	if err := db.Save(&post).Error; err != nil {
-		log.Printf("Unable to update post: %v", err)
-		http.Error(w, "Unable to update post", http.StatusInternalServerError)
-		return
-	}
-
-	log.Println("Post updated successfully")
-	http.Redirect(w, r, "/post/"+vars["id"], http.StatusSeeOther)
 }
 
 // Fonction pour supprimer un post

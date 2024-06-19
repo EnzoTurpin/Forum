@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"forum/models"
 	"html/template"
-	"log"
 	"math/rand"
 	"net/http"
 	"time"
@@ -57,35 +56,55 @@ func formatTimeAgo(t time.Time) string {
 
 // PageIndex handles the rendering of the index page
 func PageIndex(w http.ResponseWriter, r *http.Request) {
-	log.Println("Rendering index page")
-	session, _ := store.Get(r, "session")
-	user, ok := session.Values["user"]
-	data := map[string]interface{}{
-		"User": user,
-	}
-	if !ok {
-		data["User"] = ""
+	session, err := store.Get(r, "session")
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
 
+	user, ok := session.Values["user"]
+
 	var posts []models.Post
-	categories := r.URL.Query()["categories"]
-	if len(categories) > 0 {
-		db.Preload("User").Preload("Comments.User").Where("category_id IN (?)", categories).Find(&posts)
+	categoryIDs := r.URL.Query()["categories"]
+
+	if len(categoryIDs) > 0 {
+		var categories []models.Category
+		if err := db.Where("id IN ?", categoryIDs).Find(&categories).Error; err != nil {
+			http.Error(w, "Error fetching categories", http.StatusInternalServerError)
+			return
+		}
+
+		if len(categories) > 0 {
+			categoryCount := len(categories)
+			db.Preload("User").Preload("Comments.User").Preload("Categories").
+				Joins("JOIN post_categories ON post_categories.post_id = posts.id").
+				Where("post_categories.category_id IN ?", categoryIDs).
+				Group("posts.id").
+				Having("COUNT(post_categories.category_id) = ?", categoryCount).
+				Find(&posts)
+		}
 	} else {
-		db.Preload("User").Preload("Comments.User").Find(&posts)
+		db.Preload("User").Preload("Comments.User").Preload("Categories").Find(&posts)
 	}
 
 	for i := range posts {
 		posts[i].TimeAgo = formatTimeAgo(posts[i].CreatedAt)
 	}
-	data["Posts"] = posts
 
 	var categoriesList []models.Category
 	if err := db.Find(&categoriesList).Error; err == nil {
-		data["Categories"] = categoriesList
+		data := map[string]interface{}{
+			"User":       user,
+			"Posts":      posts,
+			"Categories": categoriesList,
+		}
+		if !ok {
+			data["User"] = ""
+		}
+		renderTemplate(w, "index", data)
+	} else {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
-
-	renderTemplate(w, "index", data)
 }
 
 // ForgotPassword handles the process of requesting a password reset

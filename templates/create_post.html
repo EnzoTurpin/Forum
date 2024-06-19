@@ -5,7 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Create Post</title>
     <link rel="stylesheet" href="/static/css/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="/static/js/main.js" defer></script>
+    <style>
+      /* Style pour Select2 */
+      .select2-container--default
+        .select2-selection--multiple
+        .select2-selection__choice {
+        color: black; /* Couleur du texte des éléments sélectionnés */
+      }
+
+      .select2-container--default .select2-results__option {
+        color: black; /* Couleur du texte des options dans le menu déroulant */
+      }
+
+      .select2-container--default .select2-selection--multiple {
+        background-color: #333; /* Couleur de fond du champ de sélection multiple */
+        border: 1px solid #aaa; /* Couleur de bordure */
+        color: black; /* Couleur du texte */
+      }
+
+      .select2-container--default
+        .select2-selection--multiple
+        .select2-selection__rendered {
+        color: black; /* Couleur du texte dans le champ de sélection */
+      }
+    </style>
   </head>
   <body>
     <header class="header">
@@ -13,10 +43,7 @@
     </header>
     <nav class="nav">
       {{if .User}}
-      <span class="welcome-message"
-        >Bienvenue,
-        <a href="/profile/{{.User.Username}}">{{.User.Username}}</a>!</span
-      >
+      <span class="welcome-message">Bienvenue, {{.User}}!</span>
       <a href="/logout" class="nav-link">Logout</a>
       <a href="/create-post" class="nav-link">Create Post</a>
       {{else}}
@@ -32,8 +59,8 @@
         <input type="text" id="title" name="title" required />
         <label for="content">Content:</label>
         <textarea id="content" name="content" required></textarea>
-        <label for="category">Category:</label>
-        <select id="category" name="category" required>
+        <label for="categories">Categories:</label>
+        <select id="categories" name="categories[]" multiple="multiple">
           {{range .Categories}}
           <option value="{{.ID}}">{{.Name}}</option>
           {{end}}
@@ -44,5 +71,12 @@
     <footer class="footer">
       <p>&copy; 2024 Forum</p>
     </footer>
+    <script>
+      $(document).ready(function () {
+        $("#categories").select2({
+          closeOnSelect: false, // Permet de sélectionner plusieurs catégories sans maintenir Ctrl ou Shift
+        });
+      });
+    </script>
   </body>
 </html>

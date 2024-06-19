@@ -9,8 +9,7 @@ type Post struct {
 	UserID     uint
 	User       User
 	Comments   []Comment
-	CategoryID uint
-	Category   Category
+	Categories []Category `gorm:"many2many:post_categories;"`
 	Likes      int
 	Dislikes   int
 	TimeAgo    string `gorm:"-"`
@@ -60,5 +59,5 @@ type Follower struct {
 type Category struct {
 	gorm.Model
 	Name  string `gorm:"unique;not null"`
-	Posts []Post `gorm:"foreignKey:CategoryID"`
+	Posts []Post `gorm:"many2many:post_categories;"`
 }
