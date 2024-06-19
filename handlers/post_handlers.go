@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"forum/models"
 	"log"
 	"net/http"
@@ -122,7 +123,8 @@ func LikePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println("Post like updated successfully")
-	http.Redirect(w, r, "/post/"+vars["id"], http.StatusSeeOther)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]int{"likes": post.Likes})
 }
 
 // Fonction pour afficher le formulaire de modification d'un post

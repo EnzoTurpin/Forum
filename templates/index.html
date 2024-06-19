@@ -94,6 +94,11 @@
         </div>
         <div class="post-content">
           <p>{{.Content}}</p>
+          <p>
+            Categories: {{range .Categories}}
+            <span class="category">{{.Name}}</span>
+            {{end}}
+          </p>
           <p>Likes: <span id="like-count-{{.ID}}">{{.Likes}}</span></p>
         </div>
         <div class="post-footer">

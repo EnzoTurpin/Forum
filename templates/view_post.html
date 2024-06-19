@@ -48,6 +48,11 @@
         />
         {{end}}
       </div>
+      <p>
+        Categories: {{range .Post.Categories}}
+        <span class="category">{{.Name}}</span>
+        {{end}}
+      </p>
       <p>Likes: {{.Post.Likes}}</p>
       {{if .User}}
       <form action="/post/{{.Post.ID}}/like" method="post">
