@@ -21,15 +21,28 @@ a {
 
 nav {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   background-color: #4a4a4a;
   padding: 10px;
   border-bottom: 2px solid #2d2d2d;
 }
 
+.nav-left,
+.nav-center {
+  display: flex;
+  align-items: center;
+}
+
+.nav-center {
+  flex: 1;
+  justify-content: center;
+}
+
 .welcome-message {
   color: white;
   margin-right: 10px;
+  font-size: 16px;
 }
 
 .nav-link {

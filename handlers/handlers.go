@@ -61,19 +61,15 @@ func PageIndex(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-
 	user, ok := session.Values["user"]
-
 	var posts []models.Post
 	categoryIDs := r.URL.Query()["categories"]
-
 	if len(categoryIDs) > 0 {
 		var categories []models.Category
 		if err := db.Where("id IN ?", categoryIDs).Find(&categories).Error; err != nil {
 			http.Error(w, "Error fetching categories", http.StatusInternalServerError)
 			return
 		}
-
 		if len(categories) > 0 {
 			categoryCount := len(categories)
 			db.Preload("User").Preload("Comments.User").Preload("Categories").
@@ -86,11 +82,9 @@ func PageIndex(w http.ResponseWriter, r *http.Request) {
 	} else {
 		db.Preload("User").Preload("Comments.User").Preload("Categories").Find(&posts)
 	}
-
 	for i := range posts {
 		posts[i].TimeAgo = formatTimeAgo(posts[i].CreatedAt)
 	}
-
 	var categoriesList []models.Category
 	if err := db.Find(&categoriesList).Error; err == nil {
 		data := map[string]interface{}{

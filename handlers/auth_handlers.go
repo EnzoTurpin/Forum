@@ -128,25 +128,21 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		log.Println("Handling POST request for login")
 
-		// Parse the form data
 		if err := r.ParseForm(); err != nil {
 			log.Printf("Error parsing form: %v", err)
 			http.Error(w, "Error parsing form", http.StatusBadRequest)
 			return
 		}
 
-		// Get user credentials from the form
 		email := r.FormValue("email")
 		password := r.FormValue("password")
 
-		// Validate form values
 		if email == "" || password == "" {
 			log.Println("Missing email or password")
 			http.Error(w, "Missing email or password", http.StatusBadRequest)
 			return
 		}
 
-		// Fetch the user from the database
 		var user models.User
 		result := db.Where("email = ?", email).First(&user)
 		if result.Error != nil {
@@ -155,14 +151,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Compare the hashed password with the plain text password
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 			log.Printf("Invalid email or password: %v", err)
 			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 			return
 		}
 
-		// Create a session and store user information
 		session, _ := store.Get(r, "session")
 		session.Values["user"] = user.Username
 		session.Values["userID"] = user.ID
@@ -172,7 +166,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println("User logged in successfully")
+		log.Println("User logged in successfully with username:", user.Username)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		log.Println("Rendering login template")

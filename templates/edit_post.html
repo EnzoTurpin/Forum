@@ -11,8 +11,10 @@
       <h1>Edit Post</h1>
     </header>
     <nav>
-      <a href="/">Home</a>
-      <a href="/logout">Logout</a>
+      <div class="nav-center">
+        <a href="/">Home</a>
+        <a href="/logout">Logout</a>
+      </div>
     </nav>
     <div class="container">
       <form action="/edit-post/{{.Post.ID}}" method="post">

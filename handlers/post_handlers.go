@@ -15,11 +15,14 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	log.Println("Starting CreatePost handler")
 	session, _ := store.Get(r, "session")
 	userID, ok := session.Values["userID"]
-	if !ok {
+	user, userOk := session.Values["user"]
+
+	if !ok || !userOk {
 		log.Println("User not logged in, redirecting to login page")
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
+
 	if r.Method == http.MethodPost {
 		log.Println("Handling POST request for creating a post")
 		r.ParseForm()
@@ -58,9 +61,12 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Unable to fetch categories", http.StatusInternalServerError)
 			return
 		}
-		renderTemplate(w, "create_post", map[string]interface{}{
+
+		data := map[string]interface{}{
+			"User":       user,
 			"Categories": categories,
-		})
+		}
+		renderTemplate(w, "create_post", data)
 	}
 }
 

@@ -12,45 +12,26 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="/static/js/main.js" defer></script>
-    <style>
-      /* Style pour Select2 */
-      .select2-container--default
-        .select2-selection--multiple
-        .select2-selection__choice {
-        color: black; /* Couleur du texte des éléments sélectionnés */
-      }
-
-      .select2-container--default .select2-results__option {
-        color: black; /* Couleur du texte des options dans le menu déroulant */
-      }
-
-      .select2-container--default .select2-selection--multiple {
-        background-color: #333; /* Couleur de fond du champ de sélection multiple */
-        border: 1px solid #aaa; /* Couleur de bordure */
-        color: black; /* Couleur du texte */
-      }
-
-      .select2-container--default
-        .select2-selection--multiple
-        .select2-selection__rendered {
-        color: black; /* Couleur du texte dans le champ de sélection */
-      }
-    </style>
   </head>
   <body>
     <header class="header">
       <h1>Gaming Universe</h1>
     </header>
     <nav class="nav">
-      {{if .User}}
-      <span class="welcome-message">Bienvenue, {{.User}}!</span>
-      <a href="/logout" class="nav-link">Logout</a>
-      <a href="/create-post" class="nav-link">Create Post</a>
-      {{else}}
-      <a href="/" class="nav-link">Home</a>
-      <a href="/login" class="nav-link">Login</a>
-      <a href="/register" class="nav-link">Register</a>
-      {{end}}
+      <div class="nav-left">
+        {{if .User}}
+        <span class="welcome-message">{{.User}}</span>
+        {{end}}
+      </div>
+      <div class="nav-center">
+        <a href="/" class="nav-link">Home</a>
+        {{if .User}}
+        <a href="/logout" class="nav-link">Logout</a>
+        {{else}}
+        <a href="/login" class="nav-link">Login</a>
+        <a href="/register" class="nav-link">Register</a>
+        {{end}}
+      </div>
     </nav>
     <div class="container">
       <h2>Create a New Post</h2>

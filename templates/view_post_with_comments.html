@@ -13,10 +13,14 @@
     <nav>
       <a href="/">Home</a>
       {{if .User}}
-      <a href="/logout">Logout</a>
+      <div class="nav-center">
+        <a href="/logout">Logout</a>
+      </div>
       {{else}}
-      <a href="/login">Login</a>
-      <a href="/register">Register</a>
+      <div class="nav-center">
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+      </div>
       {{end}}
     </nav>
     <div class="container">
