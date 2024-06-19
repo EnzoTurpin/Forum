@@ -1,26 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Delete Post</title>
+    <title>Supprimer le Post</title>
     <link rel="stylesheet" href="/static/css/style.css" />
   </head>
   <body>
     <header>
-      <h1>Delete Post</h1>
+      <h1>Supprimer le Post</h1>
     </header>
     <nav>
       <div class="nav-center">
-        <a href="/">Home</a>
-        <a href="/logout">Logout</a>
+        <a href="/">Accueil</a>
+        <a href="/logout">Déconnexion</a>
       </div>
     </nav>
     <div class="container">
-      <p>Are you sure you want to delete this post?</p>
+      <p>Êtes-vous sûr de vouloir supprimer ce post ?</p>
       <form action="/post/{{.ID}}/delete" method="post">
-        <button type="submit">Delete</button>
-        <a href="/post/{{.ID}}">Cancel</a>
+        <button type="submit">Supprimer</button>
+        <a href="/post/{{.ID}}">Annuler</a>
       </form>
     </div>
     <footer>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile of {{.ProfileUser.Username}}</title>
+    <title>Profil de {{.ProfileUser.Username}}</title>
     <link rel="stylesheet" href="/static/css/style.css" />
     <script src="/static/js/main.js" defer></script>
   </head>
@@ -17,67 +17,67 @@
         <a href="/profile/{{.CurrentUser}}">{{.CurrentUser}}</a>!</span
       >
       <div class="nav-center">
-        <a href="/logout" class="nav-link">Logout</a>
-        <a href="/create-post" class="nav-link">Create Post</a>
+        <a href="/logout" class="nav-link">Déconnexion</a>
+        <a href="/create-post" class="nav-link">Créer un Post</a>
       </div>
       {{else}}
       <div class="nav-center">
-        <a href="/" class="nav-link">Home</a>
-        <a href="/login" class="nav-link">Login</a>
-        <a href="/register" class="nav-link">Register</a>
+        <a href="/" class="nav-link">Accueil</a>
+        <a href="/login" class="nav-link">Connexion</a>
+        <a href="/register" class="nav-link">Inscription</a>
       </div>
       {{end}}
     </nav>
     <div class="container">
-      <h1>Profile of {{.ProfileUser.Username}}</h1>
+      <h1>Profil de {{.ProfileUser.Username}}</h1>
       <div class="profile-picture">
         {{if .ProfileUser.ProfilePicture}}
         <img
           src="/{{.ProfileUser.ProfilePicture}}"
-          alt="Profile Picture"
+          alt="Photo de Profil"
           class="profile-picture"
         />
         {{else}}
         <img
           src="/static/img/default-picture.png"
-          alt="Default Profile Picture"
+          alt="Photo de Profil par Défaut"
           class="profile-picture"
         />
         {{end}}
       </div>
-      <h2>Posts by {{.ProfileUser.Username}}</h2>
+      <h2>Posts de {{.ProfileUser.Username}}</h2>
       {{range .Posts}}
       <div class="post">
         <h3>{{.Title}}</h3>
         <p>{{.Content}}</p>
-        <p><em>Posted {{.TimeAgo}}</em></p>
+        <p><em>Posté {{.TimeAgo}}</em></p>
       </div>
       {{else}}
-      <p>No posts available</p>
+      <p>Aucun post disponible</p>
       {{end}}
 
       <h3>
         <a href="/profile/{{.ProfileUser.Username}}/followers"
-          >Followers: {{.FollowersCount}}</a
+          >Abonnés: {{.FollowersCount}}</a
         >
       </h3>
       <h3>
         <a href="/profile/{{.ProfileUser.Username}}/following"
-          >Following: {{.FollowingCount}}</a
+          >Abonnements: {{.FollowingCount}}</a
         >
       </h3>
 
       {{if eq .CurrentUserID .ProfileUser.ID}}
       <a href="/profile/{{.ProfileUser.Username}}/edit" class="button"
-        >Edit Profile</a
+        >Modifier le Profil</a
       >
       {{else}} {{if .IsFollowing}}
       <form action="/profile/{{.ProfileUser.Username}}/unfollow" method="post">
-        <button type="submit">Unfollow</button>
+        <button type="submit">Se désabonner</button>
       </form>
       {{else}}
       <form action="/profile/{{.ProfileUser.Username}}/follow" method="post">
-        <button type="submit">Follow</button>
+        <button type="submit">S'abonner</button>
       </form>
       {{end}} {{end}}
     </div>

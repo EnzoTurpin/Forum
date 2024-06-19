@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Create Post</title>
+    <title>Créer un Post</title>
     <link rel="stylesheet" href="/static/css/style.css" />
     <link
       href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
@@ -24,29 +24,29 @@
         {{end}}
       </div>
       <div class="nav-center">
-        <a href="/" class="nav-link">Home</a>
+        <a href="/" class="nav-link">Accueil</a>
         {{if .User}}
-        <a href="/logout" class="nav-link">Logout</a>
+        <a href="/logout" class="nav-link">Déconnexion</a>
         {{else}}
-        <a href="/login" class="nav-link">Login</a>
-        <a href="/register" class="nav-link">Register</a>
+        <a href="/login" class="nav-link">Connexion</a>
+        <a href="/register" class="nav-link">Inscription</a>
         {{end}}
       </div>
     </nav>
     <div class="container">
-      <h2>Create a New Post</h2>
+      <h2>Créer un Nouveau Post</h2>
       <form action="/create-post" method="post">
-        <label for="title">Title:</label>
+        <label for="title">Titre:</label>
         <input type="text" id="title" name="title" required />
-        <label for="content">Content:</label>
+        <label for="content">Contenu:</label>
         <textarea id="content" name="content" required></textarea>
-        <label for="categories">Categories:</label>
+        <label for="categories">Catégories:</label>
         <select id="categories" name="categories[]" multiple="multiple">
           {{range .Categories}}
           <option value="{{.ID}}">{{.Name}}</option>
           {{end}}
         </select>
-        <button type="submit">Create Post</button>
+        <button type="submit">Créer le Post</button>
       </form>
     </div>
     <footer class="footer">

@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Edit Post</title>
+    <title>Modifier le Post</title>
     <link rel="stylesheet" href="/static/css/style.css" />
   </head>
   <body>
     <header>
-      <h1>Edit Post</h1>
+      <h1>Modifier le Post</h1>
     </header>
     <nav>
       <div class="nav-center">
-        <a href="/">Home</a>
-        <a href="/logout">Logout</a>
+        <a href="/">Accueil</a>
+        <a href="/logout">Déconnexion</a>
       </div>
     </nav>
     <div class="container">
       <form action="/edit-post/{{.Post.ID}}" method="post">
-        <label for="title">Title:</label>
+        <label for="title">Titre:</label>
         <input
           type="text"
           id="title"
@@ -26,11 +26,11 @@
           value="{{.Post.Title}}"
           required
         />
-        <label for="content">Content:</label>
+        <label for="content">Contenu:</label>
         <textarea id="content" name="content" required>
 {{.Post.Content}}</textarea
         >
-        <label for="category">Category:</label>
+        <label for="category">Catégorie:</label>
         <select id="category" name="category" required>
           {{range .Categories}}
           <option
@@ -44,7 +44,7 @@
           </option>
           {{end}}
         </select>
-        <button type="submit">Update Post</button>
+        <button type="submit">Mettre à jour le Post</button>
       </form>
     </div>
     <footer>

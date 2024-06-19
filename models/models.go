@@ -37,8 +37,9 @@ type User struct {
 	SecurityAnswer2   string
 	SecurityQuestion3 string
 	SecurityAnswer3   string
-	Followers         []Follower `gorm:"foreignKey:FollowsID"`
-	Following         []Follower `gorm:"foreignKey:FollowerID"`
+	Followers         []Follower     `gorm:"foreignKey:FollowsID"`
+	Following         []Follower     `gorm:"foreignKey:FollowerID"`
+	DeletedAt         gorm.DeletedAt `gorm:"-"` // Désactive la suppression en douceur pour ce modèle
 }
 
 type Like struct {

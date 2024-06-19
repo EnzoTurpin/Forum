@@ -77,10 +77,13 @@ func PageIndex(w http.ResponseWriter, r *http.Request) {
 				Where("post_categories.category_id IN ?", categoryIDs).
 				Group("posts.id").
 				Having("COUNT(post_categories.category_id) = ?", categoryCount).
+				Order("created_at desc"). // Tri par date de création décroissante
 				Find(&posts)
 		}
 	} else {
-		db.Preload("User").Preload("Comments.User").Preload("Categories").Find(&posts)
+		db.Preload("User").Preload("Comments.User").Preload("Categories").
+			Order("created_at desc"). // Tri par date de création décroissante
+			Find(&posts)
 	}
 	for i := range posts {
 		posts[i].TimeAgo = formatTimeAgo(posts[i].CreatedAt)

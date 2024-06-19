@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reset Password</title>
+    <title>Réinitialiser le Mot de Passe</title>
     <link rel="stylesheet" href="/static/css/style.css" />
   </head>
   <body>
@@ -12,13 +12,13 @@
     </header>
     <nav class="nav">
       <div class="nav-center">
-        <a href="/" class="nav-link">Home</a>
-        <a href="/login" class="nav-link">Login</a>
-        <a href="/register" class="nav-link">Register</a>
+        <a href="/" class="nav-link">Accueil</a>
+        <a href="/login" class="nav-link">Connexion</a>
+        <a href="/register" class="nav-link">Inscription</a>
       </div>
     </nav>
     <div class="container">
-      <h2>Reset Password</h2>
+      <h2>Réinitialiser le Mot de Passe</h2>
       <form action="/reset-password" method="post">
         <input type="hidden" name="email" value="{{.Email}}" />
         <label for="securityAnswer">{{.Question}}</label>
@@ -26,12 +26,12 @@
         {{if .SecurityError}}
         <p style="color: red">{{.SecurityError}}</p>
         {{end}}
-        <label for="newPassword">New Password:</label>
+        <label for="newPassword">Nouveau Mot de Passe:</label>
         <input type="password" id="newPassword" name="newPassword" required />
         {{if .PasswordError}}
         <p style="color: red">{{.PasswordError}}</p>
         {{end}}
-        <button type="submit">Reset Password</button>
+        <button type="submit">Réinitialiser le Mot de Passe</button>
       </form>
     </div>
     <footer class="footer">

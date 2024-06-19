@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Comments</title>
+    <title>Commentaires</title>
     <link rel="stylesheet" href="/static/css/style.css" />
   </head>
   <body>
@@ -11,26 +11,26 @@
     <p>{{.Post.Content}}</p>
     <p>
       <em
-        >Posted by
+        >Posté par
         <a href="/profile/{{.Post.User.Username}}"
           >{{.Post.User.Username}}</a
         ></em
       >
     </p>
     <div class="comments-section">
-      <h3>All Comments</h3>
+      <h3>Tous les Commentaires</h3>
       {{range .Post.Comments}}
       <div class="comment">
         <p>{{.Content}}</p>
         <p>
           <em
-            >Commented by
+            >Commenté par
             <a href="/profile/{{.User.Username}}">{{.User.Username}}</a></em
           >
         </p>
       </div>
       {{else}}
-      <p>No comments yet</p>
+      <p>Aucun commentaire pour le moment</p>
       {{end}}
     </div>
   </body>

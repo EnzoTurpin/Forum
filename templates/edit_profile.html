@@ -1,15 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Edit Profile</title>
+    <title>Modifier le Profil</title>
     <link rel="stylesheet" href="/static/css/style.css" />
+    <style>
+      .error-message {
+        color: red;
+        font-size: 0.8em;
+        margin-top: 5px;
+      }
+    </style>
     <script src="/static/js/main.js" defer></script>
   </head>
   <body>
     <header class="header">
-      <h1>Gaming Universe</h1>
+      <h1>Univers du Jeu</h1>
     </header>
     <nav class="nav">
       {{if .User}}
@@ -17,27 +24,29 @@
         <a href="/profile/{{.User.Username}}">{{.User.Username}}</a>!</span
       >
       <div class="nav-center">
-        <a href="/logout" class="nav-link">Logout</a>
-        <a href="/create-post" class="nav-link">Create Post</a>
+        <a href="/logout" class="nav-link">Déconnexion</a>
+        <a href="/create-post" class="nav-link">Créer un Post</a>
       </div>
       {{else}}
       <div class="nav-center">
-        <a href="/" class="nav-link">Home</a>
-        <a href="/login" class="nav-link">Login</a>
-        <a href="/register" class="nav-link">Register</a>
+        <a href="/" class="nav-link">Accueil</a>
+        <a href="/login" class="nav-link">Connexion</a>
+        <a href="/register" class="nav-link">Inscription</a>
       </div>
       {{end}}
-      <a href="/profile/{{.User.Username}}" class="nav-link">Back to Profile</a>
+      <a href="/profile/{{.User.Username}}" class="nav-link"
+        >Retour au Profil</a
+      >
     </nav>
     <div class="container">
-      <h2>Edit your profile</h2>
+      <h2>Modifier votre profil</h2>
       <form
         id="edit-profile-form"
         action="/profile/{{.User.Username}}/edit"
         method="post"
         enctype="multipart/form-data"
       >
-        <label for="username">Username:</label>
+        <label for="username">Nom d'utilisateur:</label>
         <input
           type="text"
           id="username"
@@ -46,8 +55,9 @@
           required
         />
         {{if .UsernameError}}
-        <p style="color: red">{{.UsernameError}}</p>
+        <div class="error-message">{{.UsernameError}}</div>
         {{end}}
+
         <label for="email">Email:</label>
         <input
           type="email"
@@ -57,27 +67,30 @@
           required
         />
         {{if .EmailError}}
-        <p style="color: red">{{.EmailError}}</p>
+        <div class="error-message">{{.EmailError}}</div>
         {{end}}
+
         <label for="password"
-          >New Password (leave blank to keep current password):</label
+          >Nouveau Mot de Passe (laisser vide pour conserver le mot de passe
+          actuel):</label
         >
         <input type="password" id="password" name="password" />
         {{if .PasswordError}}
-        <p style="color: red">{{.PasswordError}}</p>
+        <div class="error-message">{{.PasswordError}}</div>
         {{end}}
-        <label for="profile_picture">Profile Picture:</label>
+
+        <label for="profile_picture">Photo de Profil:</label>
         <input type="file" id="profile_picture" name="profile_picture" />
-        <button type="submit">Save Changes</button>
+        <button type="submit">Sauvegarder les Modifications</button>
       </form>
       <form
         id="delete-profile-form"
         action="/profile/{{.User.Username}}/delete"
         method="post"
-        onsubmit="return confirm('Are you sure you want to delete your profile? This action cannot be undone.');"
+        onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre profil ? Cette action est irréversible.');"
       >
         <button type="submit" style="background-color: red; color: white">
-          Delete Profile
+          Supprimer le Profil
         </button>
       </form>
     </div>

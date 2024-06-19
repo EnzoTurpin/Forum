@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register - Step 1</title>
+    <title>Inscription - Étape 1</title>
     <link rel="stylesheet" href="/static/css/style.css" />
     <style>
       .error-message {
@@ -16,63 +16,65 @@
   </head>
   <body>
     <header class="header">
-      <h1>Gaming Universe</h1>
+      <h1>Univers du Jeu</h1>
     </header>
     <nav class="nav">
       {{if .User}}
       <span class="welcome-message">{{.User}}!</span>
-      
-        <a href="/logout" class="nav-link">Logout</a>
-        <a href="/create-post" class="nav-link">Create Post</a>
+      <div class="nav-center">
+        <a href="/logout" class="nav-link">Déconnexion</a>
+        <a href="/create-post" class="nav-link">Créer un Post</a>
       </div>
       {{else}}
       <div class="nav-center">
-      <a href="/" class="nav-link">Home</a>
-      <a href="/login" class="nav-link">Login</a>
-      <a href="/register" class="nav-link">Register</a>
+        <a href="/" class="nav-link">Accueil</a>
+        <a href="/login" class="nav-link">Connexion</a>
+        <a href="/register" class="nav-link">Inscription</a>
       </div>
       {{end}}
     </nav>
     <div class="container">
-      <h2>Register - Step 1</h2>
+      <h2>Inscription - Étape 1</h2>
       <form action="/register-step1" method="post">
         <label for="email">Email:</label>
         <input
           type="email"
           id="email"
           name="email"
-          placeholder="Enter your email"
+          placeholder="Entrez votre email"
+          value="{{.Email}}"
           required
         />
         {{if .EmailError}}
         <div class="error-message">{{.EmailError}}</div>
         {{end}}
 
-        <label for="username">Username:</label>
+        <label for="username">Nom d'utilisateur:</label>
         <input
           type="text"
           id="username"
           name="username"
-          placeholder="Choose a username"
+          placeholder="Choisissez un nom d'utilisateur"
+          value="{{.Username}}"
           required
         />
         {{if .UsernameError}}
         <div class="error-message">{{.UsernameError}}</div>
         {{end}}
 
-        <label for="password">Password:</label>
+        <label for="password">Mot de passe:</label>
         <input
           type="password"
           id="password"
           name="password"
-          placeholder="Create a password"
+          placeholder="Créez un mot de passe"
           required
         />
         {{if .PasswordError}}
         <div class="error-message">{{.PasswordError}}</div>
         {{end}}
 
-        <button type="submit">Next</button>
+        <button type="submit">Suivant</button>
       </form>
     </div>
     <footer class="footer">

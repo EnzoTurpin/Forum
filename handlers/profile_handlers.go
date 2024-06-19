@@ -173,6 +173,16 @@ func EditProfile(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 		log.Printf("Parsed form values - Username: %s, Email: %s, Password: %s", newUsername, newEmail, password)
 
+		if len(newUsername) > 18 {
+			log.Println("Username too long")
+			data := map[string]interface{}{
+				"User":          user,
+				"UsernameError": "Le nom d'utilisateur ne doit pas dépasser 18 caractères",
+			}
+			renderTemplate(w, "edit_profile", data)
+			return
+		}
+
 		// Check if the new username already exists
 		var existingUser models.User
 		if err := db.Where("username = ? AND id != ?", newUsername, user.ID).First(&existingUser).Error; err == nil {
@@ -335,17 +345,35 @@ func DeleteProfile(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		log.Println("Handling POST request for profile deletion")
 
+		tx := db.Begin()
+
 		// Delete user's posts
-		if err := db.Where("user_id = ?", user.ID).Delete(&models.Post{}).Error; err != nil {
+		if err := tx.Where("user_id = ?", user.ID).Delete(&models.Post{}).Error; err != nil {
 			log.Printf("Error deleting user's posts: %v", err)
+			tx.Rollback()
 			http.Error(w, "Error deleting user's posts", http.StatusInternalServerError)
 			return
 		}
 
-		// Delete the user
-		if err := db.Delete(&user).Error; err != nil {
+		// Delete user's followers and following relationships
+		if err := tx.Where("follower_id = ? OR follows_id = ?", user.ID, user.ID).Unscoped().Delete(&models.Follower{}).Error; err != nil {
+			log.Printf("Error deleting user's follows: %v", err)
+			tx.Rollback()
+			http.Error(w, "Error deleting user's follows", http.StatusInternalServerError)
+			return
+		}
+
+		// Delete the user permanently
+		if err := tx.Unscoped().Delete(&user).Error; err != nil {
 			log.Printf("Error deleting user: %v", err)
+			tx.Rollback()
 			http.Error(w, "Error deleting user", http.StatusInternalServerError)
+			return
+		}
+
+		if err := tx.Commit().Error; err != nil {
+			log.Printf("Transaction commit failed: %v", err)
+			http.Error(w, "Error during transaction", http.StatusInternalServerError)
 			return
 		}
 

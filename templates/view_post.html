@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,14 +15,14 @@
       {{if .User}}
       <span class="welcome-message">{{.User}}!</span>
       <div class="nav-center">
-        <a href="/logout" class="nav-link">Logout</a>
-        <a href="/create-post" class="nav-link">Create Post</a>
+        <a href="/logout" class="nav-link">Déconnexion</a>
+        <a href="/create-post" class="nav-link">Créer un Post</a>
       </div>
       {{else}}
       <div class="nav-center">
-        <a href="/" class="nav-link">Home</a>
-        <a href="/login" class="nav-link">Login</a>
-        <a href="/register" class="nav-link">Register</a>
+        <a href="/" class="nav-link">Accueil</a>
+        <a href="/login" class="nav-link">Connexion</a>
+        <a href="/register" class="nav-link">Inscription</a>
       </div>
       {{end}}
     </nav>
@@ -31,7 +31,7 @@
       <p>{{.Post.Content}}</p>
       <p>
         <em
-          >Posted by
+          >Posté par
           <a href="/profile/{{.Post.User.Username}}"
             >{{.Post.User.Username}}</a
           ></em
@@ -41,37 +41,37 @@
         {{if .Post.User.ProfilePicture}}
         <img
           src="/{{.Post.User.ProfilePicture}}"
-          alt="Profile Picture"
+          alt="Photo de Profil"
           class="profile-picture"
         />
         {{else}}
         <img
           src="/static/img/default-picture.png"
-          alt="Default Profile Picture"
+          alt="Photo de Profil par Défaut"
           class="profile-picture"
         />
         {{end}}
       </div>
       <p>
-        Categories: {{range .Post.Categories}}
+        Catégories: {{range .Post.Categories}}
         <span class="category">{{.Name}}</span>
         {{end}}
       </p>
       <p>Likes: {{.Post.Likes}}</p>
       {{if .User}}
       <form action="/post/{{.Post.ID}}/like" method="post">
-        <button type="submit">Like</button>
+        <button type="submit">J'aime</button>
       </form>
       {{end}}
 
-      <h3>Comments</h3>
+      <h3>Commentaires</h3>
       <div class="comments-section">
         {{range .Post.Comments}}
         <div class="comment">
           <p>{{.Content}}</p>
           <p>
             <em
-              >Commented by
+              >Commenté par
               <a href="/profile/{{.User.Username}}">{{.User.Username}}</a></em
             >
           </p>
@@ -82,21 +82,21 @@
             data-post-id="{{$.Post.ID}}"
             data-comment-id="{{.ID}}"
           >
-            ❤️ Like
+            ❤️ J'aime
           </button>
           {{end}}
           <hr />
         </div>
         {{else}}
-        <p>No comments yet</p>
+        <p>Aucun commentaire pour le moment</p>
         {{end}}
       </div>
       {{if .User}}
-      <h3>Add a Comment</h3>
+      <h3>Ajouter un Commentaire</h3>
       <div id="reply-form-{{.Post.ID}}" class="reply-form">
         <form action="/post/{{.Post.ID}}/comment" method="post">
           <textarea name="content" required></textarea>
-          <button type="submit">Submit Comment</button>
+          <button type="submit">Soumettre le Commentaire</button>
         </form>
       </div>
       {{end}}

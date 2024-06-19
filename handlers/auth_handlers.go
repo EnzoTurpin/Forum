@@ -219,6 +219,17 @@ func RegisterStep1(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		if len(username) > 18 {
+			log.Println("Username too long")
+			data := map[string]interface{}{
+				"UsernameError": "Le nom d'utilisateur ne doit pas dépasser 18 caractères",
+				"Username":      username,
+				"Email":         email,
+			}
+			renderTemplate(w, "register", data)
+			return
+		}
+
 		var existingUser models.User
 		// Check if the email already exists
 		if err := db.Where("email = ?", email).First(&existingUser).Error; err == nil {

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register - Step 2</title>
+    <title>Inscription - Étape 2</title>
     <link rel="stylesheet" href="/static/css/style.css" />
     <script src="/static/js/main.js" defer></script>
   </head>
@@ -15,24 +15,26 @@
       {{if .User}}
       <span class="welcome-message">{{.User}}!</span>
       <div class="nav-center">
-        <a href="/logout" class="nav-link">Logout</a>
-        <a href="/create-post" class="nav-link">Create Post</a>
+        <a href="/logout" class="nav-link">Déconnexion</a>
+        <a href="/create-post" class="nav-link">Créer un Post</a>
       </div>
       {{else}}
       <div class="nav-center">
-        <a href="/" class="nav-link">Home</a>
-        <a href="/login" class="nav-link">Login</a>
-        <a href="/register" class="nav-link">Register</a>
+        <a href="/" class="nav-link">Accueil</a>
+        <a href="/login" class="nav-link">Connexion</a>
+        <a href="/register" class="nav-link">Inscription</a>
       </div>
       {{end}}
     </nav>
     <div class="container">
-      <h2>Register - Step 2</h2>
+      <h2>Inscription - Étape 2</h2>
       <form action="/register-step2" method="post">
         <input type="hidden" name="username" value="{{.Username}}" />
         <input type="hidden" name="email" value="{{.Email}}" />
         <input type="hidden" name="password" value="{{.Password}}" />
-        <label for="securityAnswer1">What is your mother's maiden name?</label>
+        <label for="securityAnswer1"
+          >Quel est le nom de jeune fille de votre mère ?</label
+        >
         <input
           type="text"
           id="securityAnswer1"
@@ -40,7 +42,7 @@
           required
         />
         <label for="securityAnswer2"
-          >What was the name of your first pet?</label
+          >Quel était le nom de votre premier animal de compagnie ?</label
         >
         <input
           type="text"
@@ -48,14 +50,14 @@
           name="securityAnswer2"
           required
         />
-        <label for="securityAnswer3">What is your favorite book?</label>
+        <label for="securityAnswer3">Quel est votre livre préféré ?</label>
         <input
           type="text"
           id="securityAnswer3"
           name="securityAnswer3"
           required
         />
-        <button type="submit">Register</button>
+        <button type="submit">S'inscrire</button>
       </form>
     </div>
     <footer class="footer">

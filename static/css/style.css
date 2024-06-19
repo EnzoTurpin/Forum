@@ -296,6 +296,12 @@ form textarea:focus {
   margin: 10px 0;
 }
 
+.error-message {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
 /* Ajoutez ceci à votre fichier style.css */
 select[multiple] {
   width: 100%;

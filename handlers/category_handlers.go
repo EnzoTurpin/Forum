@@ -16,7 +16,10 @@ func PostsByCategory(w http.ResponseWriter, r *http.Request) {
 	category := vars["category"]
 
 	var posts []models.Post
-	if err := db.Preload("User").Preload("Comments.User").Where("category = ?", category).Find(&posts).Error; err != nil {
+	if err := db.Preload("User").Preload("Comments.User").
+		Where("category = ?", category).
+		Order("created_at desc"). // Tri par date de création décroissante
+		Find(&posts).Error; err != nil {
 		log.Printf("Category not found: %v", err)
 		http.Error(w, "Category not found", http.StatusNotFound)
 		return

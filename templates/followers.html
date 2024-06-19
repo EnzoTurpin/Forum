@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Followers of {{.ProfileUser.Username}}</title>
+    <title>Abonnés de {{.ProfileUser.Username}}</title>
     <link rel="stylesheet" href="/static/css/style.css" />
     <script src="/static/js/main.js" defer></script>
   </head>
   <body>
     <header class="header">
-      <h1>Welcome to the Forum</h1>
+      <h1>Gaming Universe</h1>
     </header>
     <nav class="nav">
       {{if .CurrentUser}}
@@ -17,20 +17,20 @@
         <a href="/profile/{{.CurrentUser}}">{{.CurrentUser}}</a>!</span
       >
       <div class="nav-center">
-        <a href="/logout" class="nav-link">Logout</a>
-        <a href="/create-post" class="nav-link">Create Post</a>
+        <a href="/logout" class="nav-link">Déconnexion</a>
+        <a href="/create-post" class="nav-link">Créer un Post</a>
       </div>
       {{else}}
       <div class="nav-center">
-        <a href="/" class="nav-link">Home</a>
-        <a href="/login" class="nav-link">Login</a>
-        <a href="/register" class="nav-link">Register</a>
+        <a href="/" class="nav-link">Accueil</a>
+        <a href="/login" class="nav-link">Connexion</a>
+        <a href="/register" class="nav-link">Inscription</a>
       </div>
       {{end}}
     </nav>
     <div class="container">
-      <h1>Followers of {{.ProfileUser.Username}}</h1>
-      <h2>Followers</h2>
+      <h1>Abonnés de {{.ProfileUser.Username}}</h1>
+      <h2>Abonnés</h2>
       <ul>
         {{range .Followers}}
         <li>
