@@ -2,6 +2,7 @@ package models
 
 import "gorm.io/gorm"
 
+// Post représente une publication dans le forum
 type Post struct {
 	gorm.Model
 	Title      string
@@ -15,6 +16,7 @@ type Post struct {
 	TimeAgo    string `gorm:"-"`
 }
 
+// Comment représente un commentaire sur une publication
 type Comment struct {
 	gorm.Model
 	Content  string
@@ -25,6 +27,7 @@ type Comment struct {
 	Dislikes int
 }
 
+// User représente un utilisateur du forum
 type User struct {
 	gorm.Model
 	Username          string `gorm:"unique;not null"`
@@ -39,9 +42,10 @@ type User struct {
 	SecurityAnswer3   string
 	Followers         []Follower     `gorm:"foreignKey:FollowsID"`
 	Following         []Follower     `gorm:"foreignKey:FollowerID"`
-	DeletedAt         gorm.DeletedAt `gorm:"-"` // Désactive la suppression en douceur pour ce modèle
+	DeletedAt         gorm.DeletedAt `gorm:"-"`
 }
 
+// Like représente un like sur une publication ou un commentaire
 type Like struct {
 	gorm.Model
 	UserID    uint
@@ -49,6 +53,7 @@ type Like struct {
 	CommentID *uint
 }
 
+// Follower représente le lien de suivi entre deux utilisateurs
 type Follower struct {
 	gorm.Model
 	FollowerID uint
@@ -57,6 +62,7 @@ type Follower struct {
 	Follows    User `gorm:"foreignKey:FollowsID"`
 }
 
+// Category représente une catégorie de publication dans le forum
 type Category struct {
 	gorm.Model
 	Name  string `gorm:"unique;not null"`

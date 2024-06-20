@@ -4,36 +4,49 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Réinitialiser le Mot de Passe</title>
+    <!-- Lien vers le fichier CSS principal -->
     <link rel="stylesheet" href="/static/css/style.css" />
   </head>
   <body>
+    <!-- En-tête de la page -->
     <header class="header">
       <h1>Gaming Universe</h1>
     </header>
+    <!-- Barre de navigation -->
     <nav class="nav">
       <div class="nav-center">
+        <!-- Liens de navigation pour les utilisateurs non connectés -->
         <a href="/" class="nav-link">Accueil</a>
         <a href="/login" class="nav-link">Connexion</a>
         <a href="/register" class="nav-link">Inscription</a>
       </div>
     </nav>
+    <!-- Contenu principal -->
     <div class="container">
       <h2>Réinitialiser le Mot de Passe</h2>
+      <!-- Formulaire de réinitialisation du mot de passe -->
       <form action="/reset-password" method="post">
+        <!-- Champ caché pour l'email -->
         <input type="hidden" name="email" value="{{.Email}}" />
+        <!-- Champ pour la question de sécurité -->
         <label for="securityAnswer">{{.Question}}</label>
         <input type="text" id="securityAnswer" name="securityAnswer" required />
         {{if .SecurityError}}
+        <!-- Message d'erreur pour la réponse de sécurité -->
         <p style="color: red">{{.SecurityError}}</p>
         {{end}}
+        <!-- Champ pour le nouveau mot de passe -->
         <label for="newPassword">Nouveau Mot de Passe:</label>
         <input type="password" id="newPassword" name="newPassword" required />
         {{if .PasswordError}}
+        <!-- Message d'erreur pour le nouveau mot de passe -->
         <p style="color: red">{{.PasswordError}}</p>
         {{end}}
+        <!-- Bouton de soumission du formulaire -->
         <button type="submit">Réinitialiser le Mot de Passe</button>
       </form>
     </div>
+    <!-- Pied de page -->
     <footer class="footer">
       <p>&copy; 2024 Forum</p>
     </footer>

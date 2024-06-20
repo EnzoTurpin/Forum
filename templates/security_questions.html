@@ -4,52 +4,65 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Inscription - Étape 2</title>
+    <!-- Lien vers le fichier CSS principal -->
     <link rel="stylesheet" href="/static/css/style.css" />
+    <!-- Lien vers le fichier JS principal -->
     <script src="/static/js/main.js" defer></script>
   </head>
   <body>
+    <!-- En-tête de la page -->
     <header class="header">
       <h1>Gaming Universe</h1>
     </header>
+    <!-- Barre de navigation -->
     <nav class="nav">
+      <!-- Afficher un message de bienvenue si l'utilisateur est connecté -->
       {{if .User}}
       <span class="welcome-message">{{.User}}!</span>
       <div class="nav-center">
+        <!-- Liens de navigation pour les utilisateurs connectés -->
         <a href="/logout" class="nav-link">Déconnexion</a>
         <a href="/create-post" class="nav-link">Créer un Post</a>
       </div>
       {{else}}
       <div class="nav-center">
+        <!-- Liens de navigation pour les utilisateurs non connectés -->
         <a href="/" class="nav-link">Accueil</a>
         <a href="/login" class="nav-link">Connexion</a>
         <a href="/register" class="nav-link">Inscription</a>
       </div>
       {{end}}
     </nav>
+    <!-- Contenu principal -->
     <div class="container">
       <h2>Inscription - Étape 2</h2>
+      <!-- Formulaire d'inscription étape 2 -->
       <form action="/register-step2" method="post">
+        <!-- Champs cachés pour les informations de l'étape 1 -->
         <input type="hidden" name="username" value="{{.Username}}" />
         <input type="hidden" name="email" value="{{.Email}}" />
         <input type="hidden" name="password" value="{{.Password}}" />
-        <label for="securityAnswer1"
-          >Quel est le nom de jeune fille de votre mère ?</label
-        >
+        <!-- Champ pour la première question de sécurité -->
+        <label for="securityAnswer1">
+          Quel est le nom de jeune fille de votre mère ?
+        </label>
         <input
           type="text"
           id="securityAnswer1"
           name="securityAnswer1"
           required
         />
-        <label for="securityAnswer2"
-          >Quel était le nom de votre premier animal de compagnie ?</label
-        >
+        <!-- Champ pour la deuxième question de sécurité -->
+        <label for="securityAnswer2">
+          Quel était le nom de votre premier animal de compagnie ?
+        </label>
         <input
           type="text"
           id="securityAnswer2"
           name="securityAnswer2"
           required
         />
+        <!-- Champ pour la troisième question de sécurité -->
         <label for="securityAnswer3">Quel est votre livre préféré ?</label>
         <input
           type="text"
@@ -57,9 +70,11 @@
           name="securityAnswer3"
           required
         />
+        <!-- Bouton de soumission du formulaire -->
         <button type="submit">S'inscrire</button>
       </form>
     </div>
+    <!-- Pied de page -->
     <footer class="footer">
       <p>&copy; 2024 Forum</p>
     </footer>

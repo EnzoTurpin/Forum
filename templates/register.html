@@ -4,7 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Inscription - Étape 1</title>
+    <!-- Lien vers le fichier CSS principal -->
     <link rel="stylesheet" href="/static/css/style.css" />
+    <!-- Styles spécifiques pour les messages d'erreur -->
     <style>
       .error-message {
         color: red;
@@ -12,30 +14,39 @@
         margin-top: 5px;
       }
     </style>
+    <!-- Lien vers le fichier JS principal -->
     <script src="/static/js/main.js" defer></script>
   </head>
   <body>
+    <!-- En-tête de la page -->
     <header class="header">
       <h1>Univers du Jeu</h1>
     </header>
+    <!-- Barre de navigation -->
     <nav class="nav">
+      <!-- Afficher un message de bienvenue si l'utilisateur est connecté -->
       {{if .User}}
       <span class="welcome-message">{{.User}}!</span>
       <div class="nav-center">
+        <!-- Liens de navigation pour les utilisateurs connectés -->
         <a href="/logout" class="nav-link">Déconnexion</a>
         <a href="/create-post" class="nav-link">Créer un Post</a>
       </div>
       {{else}}
       <div class="nav-center">
+        <!-- Liens de navigation pour les utilisateurs non connectés -->
         <a href="/" class="nav-link">Accueil</a>
         <a href="/login" class="nav-link">Connexion</a>
         <a href="/register" class="nav-link">Inscription</a>
       </div>
       {{end}}
     </nav>
+    <!-- Contenu principal -->
     <div class="container">
       <h2>Inscription - Étape 1</h2>
+      <!-- Formulaire d'inscription étape 1 -->
       <form action="/register-step1" method="post">
+        <!-- Champ pour l'email -->
         <label for="email">Email:</label>
         <input
           type="email"
@@ -49,6 +60,7 @@
         <div class="error-message">{{.EmailError}}</div>
         {{end}}
 
+        <!-- Champ pour le nom d'utilisateur -->
         <label for="username">Nom d'utilisateur:</label>
         <input
           type="text"
@@ -62,6 +74,7 @@
         <div class="error-message">{{.UsernameError}}</div>
         {{end}}
 
+        <!-- Champ pour le mot de passe -->
         <label for="password">Mot de passe:</label>
         <input
           type="password"
@@ -74,9 +87,11 @@
         <div class="error-message">{{.PasswordError}}</div>
         {{end}}
 
+        <!-- Bouton de soumission du formulaire -->
         <button type="submit">Suivant</button>
       </form>
     </div>
+    <!-- Pied de page -->
     <footer class="footer">
       <p>&copy; 2024 Forum</p>
     </footer>

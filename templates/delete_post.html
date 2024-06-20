@@ -4,25 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Supprimer le Post</title>
+    <!-- Lien vers le fichier CSS principal -->
     <link rel="stylesheet" href="/static/css/style.css" />
   </head>
   <body>
+    <!-- En-tête de la page -->
     <header>
       <h1>Supprimer le Post</h1>
     </header>
+    <!-- Barre de navigation -->
     <nav>
       <div class="nav-center">
+        <!-- Liens de navigation -->
         <a href="/">Accueil</a>
         <a href="/logout">Déconnexion</a>
       </div>
     </nav>
+    <!-- Contenu principal -->
     <div class="container">
       <p>Êtes-vous sûr de vouloir supprimer ce post ?</p>
+      <!-- Formulaire de confirmation de suppression -->
       <form action="/post/{{.ID}}/delete" method="post">
         <button type="submit">Supprimer</button>
+        <!-- Lien pour annuler la suppression -->
         <a href="/post/{{.ID}}">Annuler</a>
       </form>
     </div>
+    <!-- Pied de page -->
     <footer>
       <p>&copy; 2024 Forum</p>
     </footer>

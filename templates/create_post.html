@@ -4,26 +4,59 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Créer un Post</title>
+    <!-- Lien vers le fichier CSS principal -->
     <link rel="stylesheet" href="/static/css/style.css" />
+    <!-- Lien vers le fichier CSS de Select2 -->
     <link
       href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
       rel="stylesheet"
     />
+    <!-- Lien vers jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Lien vers le fichier JS de Select2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- Lien vers le fichier JS principal -->
     <script src="/static/js/main.js" defer></script>
+    <style>
+      /* Style obligatoire pour les catégories*/
+      .select2-container--default
+        .select2-selection--multiple
+        .select2-selection__choice {
+        color: black;
+      }
+
+      .select2-container--default .select2-results__option {
+        color: black;
+      }
+
+      .select2-container--default .select2-selection--multiple {
+        background-color: #333;
+        border: 1px solid #aaa;
+        color: black;
+      }
+
+      .select2-container--default
+        .select2-selection--multiple
+        .select2-selection__rendered {
+        color: black;
+      }
+    </style>
   </head>
   <body>
+    <!-- En-tête de la page -->
     <header class="header">
       <h1>Gaming Universe</h1>
     </header>
+    <!-- Barre de navigation -->
     <nav class="nav">
       <div class="nav-left">
+        <!-- Afficher le message de bienvenue si l'utilisateur est connecté -->
         {{if .User}}
         <span class="welcome-message">{{.User}}</span>
         {{end}}
       </div>
       <div class="nav-center">
+        <!-- Liens de navigation -->
         <a href="/" class="nav-link">Accueil</a>
         {{if .User}}
         <a href="/logout" class="nav-link">Déconnexion</a>
@@ -33,14 +66,17 @@
         {{end}}
       </div>
     </nav>
+    <!-- Contenu principal -->
     <div class="container">
       <h2>Créer un Nouveau Post</h2>
+      <!-- Formulaire de création de post -->
       <form action="/create-post" method="post">
         <label for="title">Titre:</label>
         <input type="text" id="title" name="title" required />
         <label for="content">Contenu:</label>
         <textarea id="content" name="content" required></textarea>
         <label for="categories">Catégories:</label>
+        <!-- Sélecteur de catégories avec support pour la sélection multiple -->
         <select id="categories" name="categories[]" multiple="multiple">
           {{range .Categories}}
           <option value="{{.ID}}">{{.Name}}</option>
@@ -49,13 +85,15 @@
         <button type="submit">Créer le Post</button>
       </form>
     </div>
+    <!-- Pied de page -->
     <footer class="footer">
       <p>&copy; 2024 Forum</p>
     </footer>
+    <!-- Script pour initialiser Select2 sur le sélecteur de catégories -->
     <script>
       $(document).ready(function () {
         $("#categories").select2({
-          closeOnSelect: false, // Permet de sélectionner plusieurs catégories sans maintenir Ctrl ou Shift
+          closeOnSelect: false,
         });
       });
     </script>

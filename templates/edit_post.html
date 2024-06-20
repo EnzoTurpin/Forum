@@ -4,20 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Modifier le Post</title>
+    <!-- Lien vers le fichier CSS principal -->
     <link rel="stylesheet" href="/static/css/style.css" />
   </head>
   <body>
+    <!-- En-tête de la page -->
     <header>
       <h1>Modifier le Post</h1>
     </header>
+    <!-- Barre de navigation -->
     <nav>
       <div class="nav-center">
+        <!-- Liens de navigation -->
         <a href="/">Accueil</a>
         <a href="/logout">Déconnexion</a>
       </div>
     </nav>
+    <!-- Contenu principal -->
     <div class="container">
+      <!-- Formulaire de modification de post -->
       <form action="/edit-post/{{.Post.ID}}" method="post">
+        <!-- Champ pour le titre du post -->
         <label for="title">Titre:</label>
         <input
           type="text"
@@ -26,10 +33,12 @@
           value="{{.Post.Title}}"
           required
         />
+        <!-- Champ pour le contenu du post -->
         <label for="content">Contenu:</label>
         <textarea id="content" name="content" required>
 {{.Post.Content}}</textarea
         >
+        <!-- Champ pour la catégorie du post -->
         <label for="category">Catégorie:</label>
         <select id="category" name="category" required>
           {{range .Categories}}
@@ -44,9 +53,11 @@
           </option>
           {{end}}
         </select>
+        <!-- Bouton pour soumettre le formulaire -->
         <button type="submit">Mettre à jour le Post</button>
       </form>
     </div>
+    <!-- Pied de page -->
     <footer>
       <p>&copy; 2024 Forum</p>
     </footer>

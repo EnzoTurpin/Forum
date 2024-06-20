@@ -4,32 +4,41 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profil de {{.ProfileUser.Username}}</title>
+    <!-- Lien vers le fichier CSS principal -->
     <link rel="stylesheet" href="/static/css/style.css" />
+    <!-- Lien vers le fichier JS principal -->
     <script src="/static/js/main.js" defer></script>
   </head>
   <body>
+    <!-- En-tête de la page -->
     <header class="header">
       <h1>Gaming Universe</h1>
     </header>
+    <!-- Barre de navigation -->
     <nav class="nav">
       {{if .CurrentUser}}
       <span class="welcome-message">
-        <a href="/profile/{{.CurrentUser}}">{{.CurrentUser}}</a>!</span
-      >
+        <a href="/profile/{{.CurrentUser}}">{{.CurrentUser}}</a>!
+      </span>
       <div class="nav-center">
+        <!-- Liens de navigation pour les utilisateurs connectés -->
+        <a href="/" class="nav-link">Accueil</a>
         <a href="/logout" class="nav-link">Déconnexion</a>
         <a href="/create-post" class="nav-link">Créer un Post</a>
       </div>
       {{else}}
       <div class="nav-center">
+        <!-- Liens de navigation pour les utilisateurs non connectés -->
         <a href="/" class="nav-link">Accueil</a>
         <a href="/login" class="nav-link">Connexion</a>
         <a href="/register" class="nav-link">Inscription</a>
       </div>
       {{end}}
     </nav>
+    <!-- Contenu principal -->
     <div class="container">
       <h1>Profil de {{.ProfileUser.Username}}</h1>
+      <!-- Affichage de la photo de profil -->
       <div class="profile-picture">
         {{if .ProfileUser.ProfilePicture}}
         <img
@@ -45,17 +54,40 @@
         />
         {{end}}
       </div>
+      <!-- Ajoutez ce formulaire de modification dans la boucle des posts -->
       <h2>Posts de {{.ProfileUser.Username}}</h2>
       {{range .Posts}}
+      <br />
       <div class="post">
         <h3>{{.Title}}</h3>
         <p>{{.Content}}</p>
         <p><em>Posté {{.TimeAgo}}</em></p>
+        {{if eq .UserID $.CurrentUserID}}
+        <button class="edit-button" data-post-id="{{.ID}}">Modifier</button>
+        <div id="edit-form-{{.ID}}" class="edit-form" style="display: none">
+          <form action="/edit-post/{{.ID}}" method="post">
+            <label for="title">Titre:</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value="{{.Title}}"
+              required
+            />
+            <label for="content">Contenu:</label>
+            <textarea id="content" name="content" required>
+{{.Content}}</textarea
+            >
+            <button type="submit">Mettre à jour le Post</button>
+          </form>
+        </div>
+        {{end}}
       </div>
       {{else}}
       <p>Aucun post disponible</p>
       {{end}}
 
+      <!-- Liens vers les abonnés et abonnements -->
       <h3>
         <a href="/profile/{{.ProfileUser.Username}}/followers"
           >Abonnés: {{.FollowersCount}}</a
@@ -67,6 +99,7 @@
         >
       </h3>
 
+      <!-- Boutons pour modifier le profil ou gérer l'abonnement -->
       {{if eq .CurrentUserID .ProfileUser.ID}}
       <a href="/profile/{{.ProfileUser.Username}}/edit" class="button"
         >Modifier le Profil</a
@@ -81,6 +114,7 @@
       </form>
       {{end}} {{end}}
     </div>
+    <!-- Pied de page -->
     <footer class="footer">
       <p>&copy; 2024 Forum</p>
     </footer>

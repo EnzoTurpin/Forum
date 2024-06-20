@@ -4,33 +4,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Abonnés de {{.ProfileUser.Username}}</title>
+    <!-- Lien vers le fichier CSS principal -->
     <link rel="stylesheet" href="/static/css/style.css" />
+    <!-- Lien vers le fichier JS principal -->
     <script src="/static/js/main.js" defer></script>
   </head>
   <body>
+    <!-- En-tête de la page -->
     <header class="header">
       <h1>Gaming Universe</h1>
     </header>
+    <!-- Barre de navigation -->
     <nav class="nav">
+      <!-- Afficher un message de bienvenue si l'utilisateur est connecté -->
       {{if .CurrentUser}}
       <span class="welcome-message">
-        <a href="/profile/{{.CurrentUser}}">{{.CurrentUser}}</a>!</span
-      >
+        <a href="/profile/{{.CurrentUser}}">{{.CurrentUser}}</a>!
+      </span>
       <div class="nav-center">
+        <!-- Liens de navigation pour les utilisateurs connectés -->
+        <a href="/" class="nav-link">Accueil</a>
         <a href="/logout" class="nav-link">Déconnexion</a>
         <a href="/create-post" class="nav-link">Créer un Post</a>
       </div>
       {{else}}
       <div class="nav-center">
+        <!-- Liens de navigation pour les utilisateurs non connectés -->
         <a href="/" class="nav-link">Accueil</a>
         <a href="/login" class="nav-link">Connexion</a>
         <a href="/register" class="nav-link">Inscription</a>
       </div>
       {{end}}
     </nav>
+    <!-- Contenu principal -->
     <div class="container">
       <h1>Abonnés de {{.ProfileUser.Username}}</h1>
       <h2>Abonnés</h2>
+      <!-- Liste des abonnés -->
       <ul>
         {{range .Followers}}
         <li>
@@ -39,6 +49,7 @@
         {{end}}
       </ul>
     </div>
+    <!-- Pied de page -->
     <footer class="footer">
       <p>&copy; 2024 Forum</p>
     </footer>

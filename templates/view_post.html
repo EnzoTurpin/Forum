@@ -4,39 +4,53 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{.Post.Title}}</title>
+    <!-- Lien vers le fichier CSS principal -->
     <link rel="stylesheet" href="/static/css/style.css" />
+    <!-- Lien vers le fichier JS principal -->
     <script src="/static/js/main.js" defer></script>
   </head>
   <body>
+    <!-- En-tête de la page -->
     <header class="header">
       <h1>Gaming Universe</h1>
     </header>
+    <!-- Barre de navigation -->
     <nav class="nav">
+      <!-- Afficher un message de bienvenue si l'utilisateur est connecté -->
       {{if .User}}
-      <span class="welcome-message">{{.User}}!</span>
+      <span class="welcome-message">
+        <a href="/profile/{{.User}}" class="username-header">{{.User}}</a>!
+      </span>
       <div class="nav-center">
+        <!-- Liens de navigation pour les utilisateurs connectés -->
+        <a href="/" class="nav-link">Accueil</a>
         <a href="/logout" class="nav-link">Déconnexion</a>
         <a href="/create-post" class="nav-link">Créer un Post</a>
       </div>
       {{else}}
       <div class="nav-center">
+        <!-- Liens de navigation pour les utilisateurs non connectés -->
         <a href="/" class="nav-link">Accueil</a>
         <a href="/login" class="nav-link">Connexion</a>
         <a href="/register" class="nav-link">Inscription</a>
       </div>
       {{end}}
     </nav>
+    <!-- Contenu principal -->
     <div class="container">
       <h2>{{.Post.Title}}</h2>
+      <!-- Contenu du post -->
       <p>{{.Post.Content}}</p>
+      <!-- Information sur l'auteur du post -->
       <p>
-        <em
-          >Posté par
-          <a href="/profile/{{.Post.User.Username}}"
-            >{{.Post.User.Username}}</a
-          ></em
-        >
+        <em>
+          Posté par
+          <a href="/profile/{{.Post.User.Username}}">
+            {{.Post.User.Username}}
+          </a>
+        </em>
       </p>
+      <!-- Affichage de la photo de profil de l'auteur -->
       <div class="profile-picture">
         {{if .Post.User.ProfilePicture}}
         <img
@@ -52,12 +66,15 @@
         />
         {{end}}
       </div>
+      <!-- Affichage des catégories du post -->
       <p>
         Catégories: {{range .Post.Categories}}
         <span class="category">{{.Name}}</span>
         {{end}}
       </p>
+      <!-- Affichage du nombre de likes du post -->
       <p>Likes: {{.Post.Likes}}</p>
+      <!-- Bouton pour liker le post, affiché seulement si l'utilisateur est connecté -->
       {{if .User}}
       <form action="/post/{{.Post.ID}}/like" method="post">
         <button type="submit">J'aime</button>
@@ -65,17 +82,22 @@
       {{end}}
 
       <h3>Commentaires</h3>
+      <!-- Section des commentaires -->
       <div class="comments-section">
+        <!-- Liste des commentaires -->
         {{range .Post.Comments}}
         <div class="comment">
           <p>{{.Content}}</p>
+          <!-- Information sur l'auteur du commentaire -->
           <p>
-            <em
-              >Commenté par
-              <a href="/profile/{{.User.Username}}">{{.User.Username}}</a></em
-            >
+            <em>
+              Commenté par
+              <a href="/profile/{{.User.Username}}"> {{.User.Username}} </a>
+            </em>
           </p>
+          <!-- Affichage du nombre de likes du commentaire -->
           <p>Likes: <span id="like-count-comment-{{.ID}}">{{.Likes}}</span></p>
+          <!-- Bouton pour liker le commentaire, affiché seulement si l'utilisateur est connecté -->
           {{if $.User}}
           <button
             class="like-comment-button"
@@ -88,9 +110,11 @@
           <hr />
         </div>
         {{else}}
+        <!-- Message affiché s'il n'y a pas de commentaires -->
         <p>Aucun commentaire pour le moment</p>
         {{end}}
       </div>
+      <!-- Formulaire pour ajouter un commentaire, affiché seulement si l'utilisateur est connecté -->
       {{if .User}}
       <h3>Ajouter un Commentaire</h3>
       <div id="reply-form-{{.Post.ID}}" class="reply-form">
@@ -101,6 +125,7 @@
       </div>
       {{end}}
     </div>
+    <!-- Pied de page -->
     <footer class="footer">
       <p>&copy; 2024 Forum</p>
     </footer>

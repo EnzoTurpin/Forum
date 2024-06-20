@@ -4,39 +4,52 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Connexion</title>
+    <!-- Lien vers le fichier CSS principal -->
     <link rel="stylesheet" href="/static/css/style.css" />
+    <!-- Lien vers le fichier JS principal -->
     <script src="/static/js/main.js" defer></script>
   </head>
   <body>
+    <!-- En-tête de la page -->
     <header class="header">
       <h1>Gaming Universe</h1>
     </header>
+    <!-- Barre de navigation -->
     <nav class="nav">
       {{if .User}}
       <span class="welcome-message">{{.User}}!</span>
       <div class="nav-center">
+        <!-- Liens de navigation pour les utilisateurs connectés -->
         <a href="/logout" class="nav-link">Déconnexion</a>
         <a href="/create-post" class="nav-link">Créer un Post</a>
       </div>
       {{else}}
       <div class="nav-center">
+        <!-- Liens de navigation pour les utilisateurs non connectés -->
         <a href="/" class="nav-link">Accueil</a>
         <a href="/login" class="nav-link">Connexion</a>
         <a href="/register" class="nav-link">Inscription</a>
       </div>
       {{end}}
     </nav>
+    <!-- Contenu principal -->
     <div class="container">
       <h2>Connexion</h2>
+      <!-- Formulaire de connexion -->
       <form action="/login" method="post">
+        <!-- Champ pour l'email -->
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required />
+        <!-- Champ pour le mot de passe -->
         <label for="password">Mot de passe:</label>
         <input type="password" id="password" name="password" required />
+        <!-- Bouton de soumission du formulaire -->
         <button type="submit">Connexion</button>
       </form>
+      <!-- Lien vers la page de mot de passe oublié -->
       <p><a href="/forgot-password">Mot de passe oublié ?</a></p>
     </div>
+    <!-- Pied de page -->
     <footer class="footer">
       <p>&copy; 2024 Forum</p>
     </footer>

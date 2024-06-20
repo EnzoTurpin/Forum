@@ -4,7 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Modifier le Profil</title>
+    <!-- Lien vers le fichier CSS principal -->
     <link rel="stylesheet" href="/static/css/style.css" />
+    <!-- Style spécifique pour les messages d'erreur -->
     <style>
       .error-message {
         color: red;
@@ -12,18 +14,22 @@
         margin-top: 5px;
       }
     </style>
+    <!-- Lien vers le fichier JS principal -->
     <script src="/static/js/main.js" defer></script>
   </head>
   <body>
+    <!-- En-tête de la page -->
     <header class="header">
       <h1>Univers du Jeu</h1>
     </header>
+    <!-- Barre de navigation -->
     <nav class="nav">
       {{if .User}}
       <span class="welcome-message">
-        <a href="/profile/{{.User.Username}}">{{.User.Username}}</a>!</span
-      >
+        <a href="/profile/{{.User.Username}}">{{.User.Username}}</a>!
+      </span>
       <div class="nav-center">
+        <a href="/" class="nav-link">Accueil</a>
         <a href="/logout" class="nav-link">Déconnexion</a>
         <a href="/create-post" class="nav-link">Créer un Post</a>
       </div>
@@ -38,14 +44,17 @@
         >Retour au Profil</a
       >
     </nav>
+    <!-- Contenu principal -->
     <div class="container">
       <h2>Modifier votre profil</h2>
+      <!-- Formulaire de modification de profil -->
       <form
         id="edit-profile-form"
         action="/profile/{{.User.Username}}/edit"
         method="post"
         enctype="multipart/form-data"
       >
+        <!-- Champ pour le nom d'utilisateur -->
         <label for="username">Nom d'utilisateur:</label>
         <input
           type="text"
@@ -58,6 +67,7 @@
         <div class="error-message">{{.UsernameError}}</div>
         {{end}}
 
+        <!-- Champ pour l'email -->
         <label for="email">Email:</label>
         <input
           type="email"
@@ -70,30 +80,36 @@
         <div class="error-message">{{.EmailError}}</div>
         {{end}}
 
-        <label for="password"
-          >Nouveau Mot de Passe (laisser vide pour conserver le mot de passe
-          actuel):</label
-        >
+        <!-- Champ pour le nouveau mot de passe -->
+        <label for="password">
+          Nouveau Mot de Passe (laisser vide pour conserver le mot de passe
+          actuel):
+        </label>
         <input type="password" id="password" name="password" />
         {{if .PasswordError}}
         <div class="error-message">{{.PasswordError}}</div>
         {{end}}
 
+        <!-- Champ pour la photo de profil -->
         <label for="profile_picture">Photo de Profil:</label>
         <input type="file" id="profile_picture" name="profile_picture" />
+        <!-- Bouton pour sauvegarder les modifications -->
         <button type="submit">Sauvegarder les Modifications</button>
       </form>
+      <!-- Formulaire de suppression de profil -->
       <form
         id="delete-profile-form"
         action="/profile/{{.User.Username}}/delete"
         method="post"
         onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre profil ? Cette action est irréversible.');"
       >
+        <!-- Bouton pour supprimer le profil -->
         <button type="submit" style="background-color: red; color: white">
           Supprimer le Profil
         </button>
       </form>
     </div>
+    <!-- Pied de page -->
     <footer class="footer">
       <p>&copy; 2024 Forum</p>
     </footer>
