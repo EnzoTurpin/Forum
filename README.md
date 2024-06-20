@@ -81,7 +81,8 @@ Gaming Universe Forum est une application web de discussion où les utilisateurs
 
 1. **Téléchargement et installation :**
 
-   - Téléchargez l'installeur depuis [ce lien](https://jmeubank.github.io/tdm-gcc/).
+   - Téléchargez l'installeur depuis [ce lien](https://jmeubank.github.io/tdm-gcc/download/).
+   - Choissez l'installeur `tdm64-gcc-10.3.0-2.exe`.
    - Exécutez l'installeur et suivez les instructions pour installer TDM-GCC-64 sur votre système.
 
 2. **Configuration de l'environnement :**

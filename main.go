@@ -9,12 +9,12 @@ import (
 	"syscall"
 	"time"
 
-	"forum/common"
-	"forum/handlers/auth"
-	"forum/handlers/general"
-	"forum/handlers/post"
-	"forum/handlers/profile"
-	"forum/models"
+	"forum/src/common"
+	"forum/src/handlers/auth"
+	"forum/src/handlers/general"
+	"forum/src/handlers/post"
+	"forum/src/handlers/profile"
+	"forum/src/models"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -23,7 +23,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-// Constantes de couleur pour les messages dans la console
+// Définition des constantes pour la coloration du texte dans le terminal
 const (
 	colorGreen  = "\033[32m"
 	colorYellow = "\033[33m"
@@ -32,27 +32,27 @@ const (
 )
 
 func main() {
-	// Configuration du logger pour GORM (ORM utilisé pour la base de données)
+	// Configuration du logger pour Gorm
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
 		logger.Config{
-			SlowThreshold: time.Second,
-			LogLevel:      logger.Silent,
-			Colorful:      false,
+			SlowThreshold: time.Second,   // Seuil de lenteur pour les requêtes
+			LogLevel:      logger.Silent, // Niveau de log : silencieux
+			Colorful:      false,         // Pas de couleur dans les logs
 		},
 	)
 
-	// Ouverture de la connexion à la base de données SQLite
-	db, err := gorm.Open(sqlite.Open("file:data/forum.db?cache=shared&_timeout=5000"), &gorm.Config{
-		Logger:      newLogger,
-		PrepareStmt: true,
+	// Connexion à la base de données SQLite
+	db, err := gorm.Open(sqlite.Open("data/forum.db?cache=shared&_timeout=5000"), &gorm.Config{
+		Logger:      newLogger, // Utilisation du logger configuré
+		PrepareStmt: true,      // Préparation des requêtes
 	})
 	if err != nil {
 		fmt.Println("Échec de la connexion à la base de données :", err)
 		return
 	}
 
-	// Configuration des connexions à la base de données
+	// Configuration des connexions de la base de données
 	sqlDB, err := db.DB()
 	if err != nil {
 		log.Fatal(err)
@@ -61,22 +61,22 @@ func main() {
 	sqlDB.SetMaxOpenConns(100)
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
-	// Configuration du mode journal DELETE pour SQLite
+	// Configuration du mode journal de SQLite
 	if _, err := sqlDB.Exec("PRAGMA journal_mode = DELETE;"); err != nil {
 		fmt.Println("Échec de la configuration du mode journal DELETE :", err)
 		return
 	}
 
-	// Migration des modèles de données
+	// Migration des modèles vers la base de données
 	if err := db.AutoMigrate(&models.User{}, &models.Post{}, &models.Comment{}, &models.Like{}, &models.Follower{}, &models.Category{}); err != nil {
 		log.Fatalf("Échec de la migration des modèles : %v", err)
 	}
 
-	// Définir la base de données et le store de sessions dans le package commun
+	// Configuration de la base de données et du store de sessions dans le package commun
 	common.SetDB(db)
 	common.SetStore(sessions.NewCookieStore([]byte("secret-key")))
 
-	// Création des catégories par défaut si elles n'existent pas
+	// Initialisation des catégories prédéfinies dans la base de données
 	categories := []string{"Action", "Aventure", "RPG", "FPS", "TPS", "Stratégie", "Simulation", "Sport", "Course", "Puzzle", "Combat", "Plateforme", "Horreur", "MMO", "VR", "Jeux de rythme", "Party Games", "Rogue-like", "Metroidvania", "Sandbox", "Visual Novel", "Jeux de cartes", "Jeux de société", "Jeux de gestion", "Survival"}
 	for _, name := range categories {
 		var category models.Category
@@ -85,10 +85,10 @@ func main() {
 		}
 	}
 
-	// Initialisation du routeur HTTP
+	// Initialisation du routeur
 	r := mux.NewRouter()
 
-	// Définition des routes et des gestionnaires
+	// Définition des routes et de leurs gestionnaires
 	r.HandleFunc("/", general.PageIndex).Methods("GET")
 	r.HandleFunc("/register", auth.Register).Methods("GET", "POST")
 	r.HandleFunc("/login", auth.Login).Methods("GET", "POST")
@@ -117,32 +117,33 @@ func main() {
 	r.HandleFunc("/register-step1", auth.RegisterStep1).Methods("POST")
 	r.HandleFunc("/register-step2", auth.RegisterStep2).Methods("POST")
 
-	// Servir les fichiers statiques (CSS, JS, images, etc.)
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+	// Configuration du serveur de fichiers statiques
+	staticDir := "./ressources/static/"
+	r.PathPrefix("/ressources/static/").Handler(http.StripPrefix("/ressources/static/", http.FileServer(http.Dir(staticDir))))
 
-	// Démarrage du serveur HTTP
+	// Affichage des messages indiquant que le serveur est prêt et comment l'arrêter
 	fmt.Printf("%s[SERVER_READY] Serveur démarré sur: http://localhost:8080%s\n", colorGreen, colorReset)
 	fmt.Printf("%s[SERVER_INFO] Appuyez sur Ctrl+C pour arrêter le serveur.%s\n", colorYellow, colorReset)
 
+	// Configuration et démarrage du serveur HTTP
 	srv := &http.Server{
 		Addr:    ":8080",
 		Handler: r,
 	}
 
-	// Exécution du serveur dans une goroutine pour permettre l'arrêt gracieux
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Échec du démarrage du serveur : %v", err)
 		}
 	}()
 
-	// Attendre les signaux d'arrêt pour arrêter proprement le serveur
+	// Gestion des signaux pour arrêter le serveur proprement
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	fmt.Printf("%s[SERVER_STOP] Le serveur a été arrêté proprement.%s\n", colorRed, colorReset)
 
-	// Fermer le serveur proprement
+	// Fermeture du serveur HTTP
 	if err := srv.Close(); err != nil {
 		log.Fatal("Server Close:", err)
 	}
