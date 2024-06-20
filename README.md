@@ -1,6 +1,3 @@
-Voici le README mis à jour avec des instructions détaillées pour l'utilisation de TDM-GCC-64:
-
-````markdown
 # Gaming Universe Forum
 
 Gaming Universe Forum est une application web de discussion où les utilisateurs peuvent créer des comptes, publier des messages, commenter des publications, liker des messages et interagir avec d'autres utilisateurs.
@@ -63,10 +60,10 @@ Gaming Universe Forum est une application web de discussion où les utilisateurs
 
 1. Assurez-vous d'avoir Go installé sur votre machine.
 2. Clonez ce repository :
+
    ```sh
    git clone https://github.com/votre-utilisateur/forum.git
    ```
-````
 
 3. Accédez au répertoire du projet :
    ```sh
