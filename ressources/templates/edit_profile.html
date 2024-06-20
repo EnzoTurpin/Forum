@@ -93,6 +93,17 @@
         <!-- Champ pour la photo de profil -->
         <label for="profile_picture">Photo de Profil:</label>
         <input type="file" id="profile_picture" name="profile_picture" />
+        <!-- Affichage de la photo de profil actuelle -->
+        {{if .User.ProfilePicture}}
+        <div>
+          <img
+            src="/ressources/static/profile_pictures/{{.User.ProfilePicture}}"
+            alt="Photo de Profil Actuelle"
+            width="150"
+            height="150"
+          />
+        </div>
+        {{end}}
         <!-- Bouton pour sauvegarder les modifications -->
         <button type="submit">Sauvegarder les Modifications</button>
       </form>

@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"forum/src/common"
 	"forum/src/models"
+	"io"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
@@ -94,6 +97,42 @@ func EditProfile(w http.ResponseWriter, r *http.Request) {
 			}
 			common.RenderTemplate(w, "edit_profile", data)
 			return
+		}
+
+		// Gestion de la photo de profil
+		file, handler, err := r.FormFile("profile_picture")
+		if err == nil {
+			defer file.Close()
+			// Définir le chemin où la photo de profil sera sauvegardée
+			uploadDir := "./ressources/static/uploads/"
+			filePath := filepath.Join(uploadDir, handler.Filename)
+			// Créer le répertoire s'il n'existe pas
+			if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
+				log.Printf("Erreur lors de la création du répertoire : %v", err)
+				http.Error(w, "Erreur lors de la création du répertoire", http.StatusInternalServerError)
+				return
+			}
+			// Sauvegarder la photo de profil
+			out, err := os.Create(filePath)
+			if err != nil {
+				log.Printf("Erreur lors de la création du fichier : %v", err)
+				http.Error(w, "Erreur lors de la création du fichier", http.StatusInternalServerError)
+				return
+			}
+			defer out.Close()
+			_, err = io.Copy(out, file)
+			if err != nil {
+				log.Printf("Erreur lors de la sauvegarde de la photo de profil : %v", err)
+				http.Error(w, "Erreur lors de la sauvegarde de la photo de profil", http.StatusInternalServerError)
+				return
+			}
+			// Supprimer l'ancienne photo de profil si elle existe
+			if user.ProfilePicture != "" {
+				oldFilePath := filepath.Join(uploadDir, user.ProfilePicture)
+				os.Remove(oldFilePath)
+			}
+			// Mettre à jour le chemin de la nouvelle photo de profil
+			user.ProfilePicture = handler.Filename
 		}
 
 		// Mise à jour des informations de l'utilisateur
