@@ -43,7 +43,7 @@ func main() {
 	)
 
 	// Ouverture de la connexion à la base de données SQLite
-	db, err := gorm.Open(sqlite.Open("file:bdd/forum.db?cache=shared&_timeout=5000"), &gorm.Config{
+	db, err := gorm.Open(sqlite.Open("file:data/forum.db?cache=shared&_timeout=5000"), &gorm.Config{
 		Logger:      newLogger,
 		PrepareStmt: true,
 	})
