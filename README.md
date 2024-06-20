@@ -168,11 +168,23 @@ Ouvrez votre navigateur et accédez à `http://localhost:8080`.
 ## Structure du Projet
 
 - **main.go** : Point d'entrée principal de l'application.
-- **common** : Contient les fichiers de configuration et les fonctions utilitaires.
-- **handlers** : Contient les gestionnaires pour les différentes fonctionnalités (authentification, général, posts, profil).
-- **models** : Contient les définitions des modèles de données.
-- **static** : Contient les fichiers CSS et JavaScript.
-- **templates** : Contient les fichiers HTML pour le rendu côté client.
+- **data** : Contient la base de données du forum.
+- **ressources** : Contient les fichiers statiques et les modèles HTML.
+  - **static** : Contient les fichiers CSS, JavaScript, images et téléchargements.
+  - **templates** : Contient les fichiers HTML pour le rendu côté client.
+- **src** : Contient le code source de l'application.
+  - **common** : Contient les fichiers de configuration et les fonctions utilitaires.
+  - **handlers** : Contient les gestionnaires pour les différentes fonctionnalités.
+    - **auth** : Gestionnaires pour l'authentification.
+    - **general** : Gestionnaires pour les fonctionnalités générales.
+    - **post** : Gestionnaires pour les posts.
+    - **profile** : Gestionnaires pour les profils utilisateurs.
+  - **models** : Contient les définitions des modèles de données.
+- **forum.exe** : Fichier exécutable de l'application.
+- **go.mod** : Fichier de configuration des modules Go.
+- **go.sum** : Fichier de dépendances des modules Go.
+- **Makefile** : Fichier pour l'automatisation des tâches.
+- **README.md** : Documentation du projet.
 
 ## Dépendances
 
