@@ -60,11 +60,62 @@
       {{range .Posts}}
       <br />
       <div class="post">
-        <h3>{{.Title}}</h3>
-        <p>{{.Content}}</p>
-        <p><em>Posté {{.TimeAgo}}</em></p>
+        <!-- En-tête du post -->
+        <div class="post-header">
+          <h3><a href="/post/{{.ID}}" class="post-link">{{.Title}}</a></h3>
+        </div>
+        <!-- Informations sur l'utilisateur -->
+        <div class="post-user">
+          <div class="profile-picture">
+            {{if .User.ProfilePicture}}
+            <img
+              src="/ressources/static/profile_pictures/{{.User.ProfilePicture}}"
+              alt="Photo de Profil"
+              class="profile-picture"
+            />
+            {{else}}
+            <img
+              src="/ressources/static/img/default-picture.png"
+              alt="Photo de Profil par Défaut"
+              class="profile-picture"
+            />
+            {{end}}
+          </div>
+          <div class="post-meta">
+            <div class="username">
+              <a href="/profile/{{.User.Username}}" class="username-link"
+                >{{.User.Username}}</a
+              >
+            </div>
+            <div class="time-ago">Posté {{.TimeAgo}}</div>
+          </div>
+        </div>
+        <!-- Contenu du post -->
+        <div class="post-content">
+          <p>
+            <strong><em>{{.Content}}</em></strong>
+          </p>
+          <p>
+            Catégories: {{range .Categories}}
+            <span class="category">{{.Name}}</span>
+            {{end}}
+          </p>
+          <p>Likes: <span id="like-count-{{.ID}}">{{.Likes}}</span></p>
+        </div>
+        <!-- Pied de page du post -->
+        <div class="post-footer">
+          <div>
+            <button class="like-button" data-post-id="{{.ID}}">❤️</button>
+            <button class="reply-button" data-post-id="{{.ID}}">
+              Répondre
+            </button>
+            {{if eq .UserID $.CurrentUserID}}
+            <button class="edit-button" data-post-id="{{.ID}}">Modifier</button>
+            {{end}}
+          </div>
+        </div>
+        <!-- Formulaire de modification -->
         {{if eq .UserID $.CurrentUserID}}
-        <button class="edit-button" data-post-id="{{.ID}}">Modifier</button>
         <div id="edit-form-{{.ID}}" class="edit-form" style="display: none">
           <form action="/edit-post/{{.ID}}" method="post">
             <label for="title">Titre:</label>
@@ -83,7 +134,36 @@
           </form>
         </div>
         {{end}}
+        <!-- Section des commentaires -->
+        <div class="comments-section">
+          <h4>Commentaires</h4>
+          {{range $index, $comment := .Comments}} {{if lt $index 2}}
+          <div class="comment">
+            <p>{{.Content}}</p>
+            <p>
+              <em
+                >Commenté par
+                <a href="/profile/{{.User.Username}}">{{.User.Username}}</a></em
+              >
+            </p>
+          </div>
+          {{end}} {{end}} {{if gt (len .Comments) 2}}
+          <a href="/post/{{.ID}}" class="view-comments-link"
+            >Voir tous les commentaires</a
+          >
+          {{end}}
+        </div>
+        {{if .User}}
+        <!-- Formulaire de réponse -->
+        <div id="reply-form-{{.ID}}" class="reply-form" style="display: none">
+          <form action="/post/{{.ID}}/comment" method="post">
+            <textarea name="content" required></textarea>
+            <button type="submit">Soumettre le Commentaire</button>
+          </form>
+        </div>
+        {{end}}
       </div>
+
       {{else}}
       <p>Aucun post disponible</p>
       {{end}}
