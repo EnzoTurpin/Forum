@@ -81,7 +81,7 @@ func ValidatePassword(password string) error {
 			hasLower = true
 		case regexp.MustCompile(`[0-9]`).MatchString(string(char)):
 			hasNumber = true
-		case regexp.MustCompile(`[!@#\$%\^&\*]`).MatchString(string(char)):
+		case regexp.MustCompile(`[!\@\#\$\%\^\&\*\(\)\-\_\=\+\{\}\[\]\|\\:;'\"<>,\.?/]`).MatchString(string(char)):
 			hasSpecial = true
 		}
 	}
