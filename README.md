@@ -13,7 +13,6 @@ Gaming Universe Forum est une application web de discussion où les utilisateurs
 - [Structure du Projet](#structure-du-projet)
 - [Dépendances](#dépendances)
 - [Contribuer](#contribuer)
-- [Licence](#licence)
 
 ## Fonctionnalités
 
@@ -198,10 +197,6 @@ Les principales dépendances du projet sont listées dans le fichier `go.mod` :
 ## Contribuer
 
 Les contributions sont les bienvenues ! Veuillez soumettre des pull requests pour toutes les améliorations ou corrections de bugs.
-
-## Licence
-
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus d'informations.
 
 ---
 
