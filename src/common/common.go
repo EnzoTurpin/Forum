@@ -72,16 +72,22 @@ func ValidatePassword(password string) error {
 		hasMinLen = true
 	}
 
+	// Utilise des expressions régulières pré-compilées pour vérifier les critères
+	reUpper := regexp.MustCompile(`[A-Z]`)
+	reLower := regexp.MustCompile(`[a-z]`)
+	reNumber := regexp.MustCompile(`[0-9]`)
+	reSpecial := regexp.MustCompile(`[!@#\$%\^&\*\(\)\-_=\+\{\}\[\]\|\\:;'\"<>,\.?/]`)
+
 	// Vérifie la présence de différents types de caractères
 	for _, char := range password {
 		switch {
-		case regexp.MustCompile(`[A-Z]`).MatchString(string(char)):
+		case reUpper.MatchString(string(char)):
 			hasUpper = true
-		case regexp.MustCompile(`[a-z]`).MatchString(string(char)):
+		case reLower.MatchString(string(char)):
 			hasLower = true
-		case regexp.MustCompile(`[0-9]`).MatchString(string(char)):
+		case reNumber.MatchString(string(char)):
 			hasNumber = true
-		case regexp.MustCompile(`[!\@\#\$\%\^\&\*\(\)\-\_\=\+\{\}\[\]\|\\:;'\"<>,\.?/]`).MatchString(string(char)):
+		case reSpecial.MatchString(string(char)):
 			hasSpecial = true
 		}
 	}
